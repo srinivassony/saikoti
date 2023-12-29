@@ -1,5 +1,11 @@
 const User = require('../../database/model/user');
+const { orWhere } = require('../config/common-knex');
 
+
+let getExsitingUserDetails = async (email, phone) =>
+{
+  return await User.query().select().where('email', email).orWhere('phone', phone).first();
+}
 
 let createUser = async(data) =>
 {
@@ -7,5 +13,6 @@ let createUser = async(data) =>
 }
 
 module.exports = {
-  createUser : createUser
+  getExsitingUserDetails : getExsitingUserDetails,
+  createUser: createUser
 }

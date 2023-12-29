@@ -1,7 +1,7 @@
 const config = require('../../../config');
 
 const tables = {
-    user: 'user'
+    user: 'sk_user'
 };
 
 const rdsPrefix = config.rdsSql.owner;

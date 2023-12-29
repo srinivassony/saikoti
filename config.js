@@ -45,6 +45,12 @@ module.exports = {
             max: Number(poolMax)
         }
     },
+    jwt: {
+        secret_key: process.env.JWT_SECRET_KEY || (environmentConfig.JWT ? environmentConfig.JWT.SECRET_KEY : null) || "saiKoti" ,
+        expiresin: process.env.JWT_EXPIRESIN || (environmentConfig.JWT ? environmentConfig.JWT.EXPIRESIN : null) || "24h",
+    },
+    
+    encrypt_secret_key: environmentConfig.ENCRYPT_SECRET_KEY || "saiKoti",
 
 }
    
