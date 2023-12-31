@@ -85,18 +85,7 @@ function validateRole(req, roles = [])
     {
         const role = roles[index];
 
-        if (role == userType.TEACHER)
-        {
-            finalRoles.push(userType.TEACHER);
-        }
-        else if (role == userType.STUDENT)
-        {
-            finalRoles.push(userType.STUDENT);
-        }
-        else
-        {
-            finalRoles.push(role);
-        }
+        finalRoles.push(role);
     }
 
     for (let index = 0; index < finalRoles.length; index++)
