@@ -20,9 +20,12 @@ let updateUser = async (id, data) =>
     return await User.query().patchAndFetchById(id, data);
 }
 
-let getUserLoginDetails = async(data) =>
+let getUserLoginDetails = async (email, password) => 
 {
-  return await User.query().select().where('email', email)
+  return await User.query().select().where({
+    email: email,
+    password: password
+  })
 }
 
 module.exports = {

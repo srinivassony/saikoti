@@ -17,7 +17,7 @@ app.post('/api/create/user', UserValidator.add(), validationHandler, async (req,
 
 app.post('/api/signin', async (req, res) => {
    
-    return res.json(await userService.UserSignInAccount(req.body))
+    return res.json(await userService.UserLoginDetails(req.body))
 });
 
 app.get('/api/update/invite/user/:id', async (req, res) => {

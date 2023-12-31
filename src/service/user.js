@@ -16,18 +16,18 @@ let createUser = async (reqParams) =>
     if (existingUserDetails) 
     {
         if(existingUserDetails.email == email)
-        {
+    {
             return {
-                status :Status.FAIL,
-                message:'User email already exists. Try with different email.'
-            }
+    status :Status.FAIL,
+    message:'User email already exists. Try with different email.'
+    }
         }
         else if(existingUserDetails.phone == phone)
-        {
+    {
             return {
-                status :Status.FAIL,
-                message:'Phone number already exists.'
-            }
+    status :Status.FAIL,
+    message:'Phone number already exists.'
+    }
         }
     }
 
@@ -166,33 +166,61 @@ let reSendInviteUser = async (id) =>
     }
 }
 
-let UserLoginDetails = async(reqParams) =>
+let UserLoginDetails = async (reqParams) => 
 {
-  try{
-    let user = await db.getUserLoginDetails(reqParams.email, reqParams.phone);
-
-    if(user.isRegistered != 1 || user.isInvited != 1 || user.inviteOn != null || user.inviteLink != null)
+    try 
     {
-      return {
-       status : Status.FAIL,
-       message : 'User login failed. Try to activate your account'
-      }
-    }
+        let email  = reqParams.email ? reqParams.email : null;
+        let password = reqParams.password ? reqParams.password : null;
 
-    return {
-      status : Status.FAIL,
-      data : {
-        user : user
-      }
+        let user = await db.getUserLoginDetails(email, password);
+
+        if (!user) 
+        {
+            return {
+                status: Status.FAIL,
+                message: 'Username or password is incorrect.'
+            }
+        }
+
+        if (user.isRegistered != 1 || user.isInvited != 1 || user.inviteOn != null || user.inviteLink != null) 
+        {
+            return {
+                status: Status.FAIL,
+                message: 'User login failed. Try to activate your account by click on to the resend link'
+            }
+        }
+
+        let tokenUser = {
+            id: user.id,
+            name: user.userName,
+            email: user.email,
+            role: user.role,
+            uuid: user.uuid
+        };
+    
+        let token = await Authentication.generateToken(tokenUser);
+    
+        let data = {
+            ...tokenUser,
+            token: token
+        }
+
+        return {
+            status: Status.SUCCESS,
+            data: {
+                user: data
+            }
+        }
+    }
+    catch (error) 
+    {
+        return {
+            status: Status.FAIL,
+            message: error.message
+        }
     }
 }
-    catch(error){
-      return {
-      status : Status.FAIL,
-      message : error.message
-      }
-    }
-  }
 
 
 module.exports = {
