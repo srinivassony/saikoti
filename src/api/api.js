@@ -20,4 +20,19 @@ app.post('/api/signin', async (req, res) => {
     return res.json(await userService.UserSignInAccount(req.body))
 });
 
+app.get('/api/update/invite/user/:id', async (req, res) => {
+   
+    return res.json(await userService.InviteUser(req.params.id))
+});
+
+app.get('/api/resend/invite/user/:id', async (req, res) => {
+   
+    return res.json(await userService.reSendInviteUser(req.params.id))
+});
+
+app.get('/api/login/user', async(req, res) =>{
+
+   return res.json(await userService.UserLoginDetails(req.body))
+})
+
 module.exports = app;

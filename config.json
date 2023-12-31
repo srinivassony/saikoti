@@ -17,6 +17,18 @@
                 "MAX": 3
             },
             "CONNECTION_TIMEOUT": 200000
+        },
+        "SERVICE_URLS": {
+            "USER_SIGNIN_UI": "http://localhost:8080"
+        },
+        "SMTP": {
+            "HOST": "smtp.gmail.com",
+            "PORT": 465,
+            "SECURE": true,
+            "REQUIRE_TLS": false,
+            "SENDER": "Sai koti",
+            "EMAIL": "priyaparuchuri111@gmail.com",
+            "PASWD": "iecalmgfgdcxmepd"
         }
     }
 }
