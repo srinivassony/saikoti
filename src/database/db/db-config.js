@@ -26,7 +26,7 @@ knex.on('query-error', (error, query) =>
 
 	const { startTime, errorTime, dbError, dbQuery } = times[uid];
 	const elapsedTime = errorTime - startTime;
-
+console.log(query)
 	// logger.log("ERROR", "Knex query error", {
 	// 	queryData: {
 	// 		__knexUid: dbQuery.__knexUid,
@@ -60,7 +60,8 @@ knex.on('query-response', (response, query, builder) =>
 	times[uid].dbQuery = query;
 
 	const { startTime, endTime, dbQuery } = times[uid];
-	const elapsedTime = endTime - startTime;
+console.log(query)
+const elapsedTime = endTime - startTime;
 
 	// logger.log("INFO", "Knex query completed", {
 	// 	queryData: {

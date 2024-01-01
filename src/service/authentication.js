@@ -68,7 +68,7 @@ function authorize(roles)
 
 function validateRole(req, roles = [])
 {
-    if (!req.smUser || !req.smUser.role)
+    if (!req.skUser || !req.skUser.role)
     {
         return false;
     }
@@ -77,7 +77,7 @@ function validateRole(req, roles = [])
         return false;
     }
 
-    let userRole = req.smUser.role;
+    let userRole = req.skUser.role;
 
     let finalRoles = [];
 
@@ -85,7 +85,14 @@ function validateRole(req, roles = [])
     {
         const role = roles[index];
 
-        finalRoles.push(role);
+        if (role == userType.USER)
+        {
+            finalRoles.push(userType.USER);
+        }
+        else
+        {
+            finalRoles.push(role);
+        }
     }
 
     for (let index = 0; index < finalRoles.length; index++)

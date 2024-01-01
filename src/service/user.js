@@ -15,19 +15,19 @@ let createUser = async (reqParams) =>
 
     if (existingUserDetails) 
     {
-        if(existingUserDetails.email == email)
-    {
+        if (existingUserDetails.email == email) 
+        {
             return {
-    status :Status.FAIL,
-    message:'User email already exists. Try with different email.'
-    }
+                status: Status.FAIL,
+                message: 'User email already exists. Try with different email.'
+            }
         }
-        else if(existingUserDetails.phone == phone)
-    {
+        else if (existingUserDetails.phone == phone) 
+        {
             return {
-    status :Status.FAIL,
-    message:'Phone number already exists.'
-    }
+                status: Status.FAIL,
+                message: 'Phone number already exists.'
+            }
         }
     }
 
