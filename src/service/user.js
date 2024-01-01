@@ -2,6 +2,8 @@ const db = require('../database/db/user');
 const common = require('../utills/utils');
 const Status = common.Status;
 const Authentication = require('../service/authentication');
+const htmlTemplate = require('../utills/htmlTemplate');
+const smtp = require('../service/smtp')
 
 let createUser = async (reqParams) => 
 {
@@ -13,18 +15,18 @@ let createUser = async (reqParams) =>
 
     if (existingUserDetails) 
     {
-        if(existingUserDetails.email == email)
+        if (existingUserDetails.email == email) 
         {
             return {
-                status :Status.FAIL,
-                message:'User email already exists. Try with different email.'
+                status: Status.FAIL,
+                message: 'User email already exists. Try with different email.'
             }
         }
-        else if(existingUserDetails.phone == phone)
+        else if (existingUserDetails.phone == phone) 
         {
             return {
-                status :Status.FAIL,
-                message:'Phone number already exists.'
+                status: Status.FAIL,
+                message: 'Phone number already exists.'
             }
         }
     }
@@ -63,6 +65,32 @@ let createUser = async (reqParams) =>
         token: token
     }
 
+    try
+    {
+        var htmlData = {
+            name: user.userName ? user.userName : '',
+            id: user.id ? user.id : null
+        };
+
+        let emailSubject = `${user.userName} you are invited to SaiKotiOnline`;
+        let emailBody = htmlTemplate.generateUserInvitation(htmlData);
+
+        let userEmailParams = {
+            email: user.email,
+            subject: emailSubject,
+            message: emailBody,
+        };
+
+        let x = await smtp.sendEmail(userEmailParams);
+
+        console.log(x)
+
+    }
+    catch (error)
+    {
+        console.log(error)
+    }
+
     return {
         status: Status.SUCCESS,
         data: {
@@ -71,6 +99,133 @@ let createUser = async (reqParams) =>
     }
 }
 
+let InviteUser = async (id) => 
+{   
+    let userDetails = await db.getUserDetails(id);
+
+    if(!userDetails)
+    {
+        return {
+            status: Status.FAIL,
+            message: 'User details not found.'
+        }
+    }
+
+    let params = {
+        isRegistered: 1,
+        isInvited: 1,
+        inviteOn: new Date(),
+        updatedAt: new Date(),
+        updatedBy: userDetails.uuid
+    }
+
+    let updateUser = await db.updateUser(id, params);
+
+    return {
+        status: Status.SUCCESS,
+        message : 'update successful.'
+    }
+}
+
+let reSendInviteUser = async (id) => 
+{   
+    try
+    {
+     let userDetails = await db.getUserDetails(id);
+
+    if(!userDetails)
+     {
+        return {
+            status: Status.FAIL,
+            message: 'User details not found.'
+        }
+     }
+
+        var htmlData = {
+            name: userDetails.userName ? userDetails.userName : '',
+            id: userDetails.id ? userDetails.id : null
+        };
+
+        let emailSubject = `${user.userName} you are invited to SaiKotiOnline`;
+        let emailBody = htmlTemplate.generateUserInvitation(htmlData);
+
+        let userEmailParams = {
+            email: userDetails.email,
+            subject: emailSubject,
+            message: emailBody,
+        };
+
+        let x = await smtp.sendEmail(userEmailParams);
+    }
+    catch(error)
+    {
+      return {
+         status : Status.FAIL,
+         message : error.message
+      }
+    }
+}
+
+let UserLoginDetails = async (reqParams) => 
+{
+    try 
+    {
+        let email  = reqParams.email ? reqParams.email : null;
+        let password = reqParams.password ? reqParams.password : null;
+
+        let user = await db.getUserLoginDetails(email, password);
+
+        if (!user) 
+        {
+            return {
+                status: Status.FAIL,
+                message: 'Username or password is incorrect.'
+            }
+        }
+
+        if (user.isRegistered != 1 || user.isInvited != 1 || user.inviteOn != null || user.inviteLink != null) 
+        {
+            return {
+                status: Status.FAIL,
+                message: 'User login failed. Try to activate your account by click on to the resend link'
+            }
+        }
+
+        let tokenUser = {
+            id: user.id,
+            name: user.userName,
+            email: user.email,
+            role: user.role,
+            uuid: user.uuid
+        };
+    
+        let token = await Authentication.generateToken(tokenUser);
+    
+        let data = {
+            ...tokenUser,
+            token: token
+        }
+
+        return {
+            status: Status.SUCCESS,
+            data: {
+                user: data
+            }
+        }
+    }
+    catch (error) 
+    {
+        return {
+            status: Status.FAIL,
+            message: error.message
+        }
+    }
+}
+
+
 module.exports = {
- createUser : createUser
+    createUser: createUser,
+    InviteUser: InviteUser,
+    reSendInviteUser : reSendInviteUser,
+    UserLoginDetails : UserLoginDetails
 }
