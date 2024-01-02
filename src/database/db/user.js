@@ -25,7 +25,12 @@ let getUserLoginDetails = async (email, password) =>
   return await User.query().select().where({
     email: email,
     password: password
-  })
+  }).first()
+}
+
+let getUserByEmailId = async(email) =>
+{
+  return await User.query().select().where('email', email).first();
 }
 
 module.exports = {
@@ -33,6 +38,7 @@ module.exports = {
   createUser: createUser,
   getUserDetails: getUserDetails,
   updateUser: updateUser,
-  getUserLoginDetails : getUserLoginDetails
+  getUserLoginDetails : getUserLoginDetails,
+  getUserByEmailId : getUserByEmailId
 
 }
