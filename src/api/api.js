@@ -1,5 +1,6 @@
 const express = require('express');
 let app = express();
+const path = require('path');
 const config = require ('../../config');
 const validationHandler = require('../validations/validation_handler');
 const UserValidator = require('../validations/user');
@@ -10,9 +11,20 @@ const userType = common.userType;
 const bodyParser = require("body-parser");
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true,  limit: '50mb' }));
+app.set('views', path.join(__dirname, '../../views'))
+app.set('view engine', 'ejs');
+app.engine('ejs', require('ejs').renderFile);
+
+app.use('/css', express.static('views'));
+app.use('/plugins', express.static('views'));
+app.use('/', express.static('views'));
 
 let userService = require('../service/user');
 let contactService = require('../service/contact');
+
+app.get('/', function(req, res) {
+    res.render('login');
+  });
 
 app.post('/api/create/user', UserValidator.add(), validationHandler, async (req, res) => {
    
