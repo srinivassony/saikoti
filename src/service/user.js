@@ -83,8 +83,6 @@ let createUser = async (reqParams) =>
 
         let x = await smtp.sendEmail(userEmailParams);
 
-        console.log(x)
-
     }
     catch (error)
     {
@@ -146,7 +144,7 @@ let reSendInviteUser = async (id) =>
             id: userDetails.id ? userDetails.id : null
         };
 
-        let emailSubject = `${user.userName} you are invited to SaiKotiOnline`;
+        let emailSubject = `${userDetails.userName} you are invited to SaiKotiOnline`; 
         let emailBody = htmlTemplate.generateUserInvitation(htmlData);
 
         let userEmailParams = {
@@ -156,6 +154,11 @@ let reSendInviteUser = async (id) =>
         };
 
         let x = await smtp.sendEmail(userEmailParams);
+
+        return{
+          status : Status.SUCCESS,
+          message : 'Invitation email is sent to your email address'
+        }
     }
     catch(error)
     {
@@ -171,7 +174,7 @@ let UserLoginDetails = async (reqParams) =>
     try 
     {
         let email  = reqParams.email ? reqParams.email : null;
-        let password = reqParams.password ? reqParams.password : null;
+        let password = reqParams.pass ? reqParams.pass: null;
 
         let user = await db.getUserLoginDetails(email, password);
 
@@ -183,7 +186,7 @@ let UserLoginDetails = async (reqParams) =>
             }
         }
 
-        if (user.isRegistered != 1 || user.isInvited != 1 || user.inviteOn != null || user.inviteLink != null) 
+        if (user.isRegistered == 0 || user.isInvited == 0 || user.inviteOn == null) 
         {
             return {
                 status: Status.FAIL,
@@ -222,10 +225,42 @@ let UserLoginDetails = async (reqParams) =>
     }
 }
 
+let ResetPassword = async (reqParams) =>
+{
+    try 
+    {
+        let email = reqParams.email ? reqParams.email : null;
+
+        let userDetails = await db.getUserByEmailId(email);
+
+        if (!userDetails)
+         {
+            return {
+                status: Status.FAIL,
+                message: "User email not found"
+            }
+        }
+
+        return {
+          status : Status.SUCCESS,
+          data : {
+            userDetails : userDetails
+          }
+        }
+    } 
+    catch (error) 
+    {
+        return {
+            status: Status.FAIL,
+            message: error.message
+        }
+    }
+}
 
 module.exports = {
     createUser: createUser,
     InviteUser: InviteUser,
     reSendInviteUser : reSendInviteUser,
-    UserLoginDetails : UserLoginDetails
+    UserLoginDetails : UserLoginDetails,
+    ResetPassword : ResetPassword
 }

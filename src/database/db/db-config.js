@@ -3,7 +3,6 @@ const config = require('../../../config');
 
 const dbServer = config.dbServer || "GOS";
 
-console.log("info", "DB server", dbServer);
 
 let knex = require("../config/common-knex");
 
@@ -26,7 +25,6 @@ knex.on('query-error', (error, query) =>
 
 	const { startTime, errorTime, dbError, dbQuery } = times[uid];
 	const elapsedTime = errorTime - startTime;
-console.log(query)
 	// logger.log("ERROR", "Knex query error", {
 	// 	queryData: {
 	// 		__knexUid: dbQuery.__knexUid,
@@ -60,8 +58,7 @@ knex.on('query-response', (response, query, builder) =>
 	times[uid].dbQuery = query;
 
 	const { startTime, endTime, dbQuery } = times[uid];
-console.log(query)
-const elapsedTime = endTime - startTime;
+    const elapsedTime = endTime - startTime;
 
 	// logger.log("INFO", "Knex query completed", {
 	// 	queryData: {
