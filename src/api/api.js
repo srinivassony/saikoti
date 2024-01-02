@@ -19,21 +19,25 @@ app.post('/api/create/user', UserValidator.add(), validationHandler, async (req,
     return res.json(await userService.createUser(req.body))
 })
 
-app.get('/api/update/invite/user/:id', async (req, res) => {
+app.get('/api/update/invite/user/:id',  UserValidator.getId(), validationHandler, async (req, res) => {
    
     return res.json(await userService.InviteUser(req.params.id))
 });
 
-app.get('/api/resend/invite/user/:id', async (req, res) => {
+app.get('/api/resend/invite/user/:id', UserValidator.getId(), validationHandler, async (req, res) => {
    
     return res.json(await userService.reSendInviteUser(req.params.id))
 });
 
-app.get('/api/login/user', async(req, res) =>{
+app.post('/api/login/user', UserValidator.addLogin(), validationHandler,  async(req, res) =>{
 
    return res.json(await userService.UserLoginDetails(req.body))
 })
 
+app.post('/api/reset/password', UserValidator.resetPassword(), validationHandler,  async(req, res) =>{
+
+   return res.json(await userService.ResetPassword(req.body))
+})
 
 let myInit = async (req, res, next) => 
 {
@@ -106,7 +110,7 @@ let myInit = async (req, res, next) =>
 
 app.use(myInit);
 
-app.post('/api/create/contact', ContactValidator.add(), validationHandler, async(req, res) => {
+app.post('/api/create/contact', Authentication.authorize([userType.USER]), ContactValidator.add(), validationHandler, async(req, res) => {
 
     return res.json(await contactService.createContact(req.body, req.skUser))
 })
