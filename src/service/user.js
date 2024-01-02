@@ -174,7 +174,7 @@ let UserLoginDetails = async (reqParams) =>
     try 
     {
         let email  = reqParams.email ? reqParams.email : null;
-        let password = reqParams.password ? reqParams.password : null;
+        let password = reqParams.pass ? reqParams.pass: null;
 
         let user = await db.getUserLoginDetails(email, password);
 
