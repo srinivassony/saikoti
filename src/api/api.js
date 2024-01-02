@@ -39,12 +39,6 @@ app.post('/api/reset/password', UserValidator.resetPassword(), validationHandler
    return res.json(await userService.ResetPassword(req.body))
 })
 
-app.post('/api/create/contact', ContactValidator.add(), validationHandler, async(req, res) => {
-
-    return res.json(await contactService.createContact(req.body, req.skUser))
-})
-
-
 let myInit = async (req, res, next) => 
 {
 	try
@@ -116,6 +110,9 @@ let myInit = async (req, res, next) =>
 
 app.use(myInit);
 
+app.post('/api/create/contact', Authentication.authorize([userType.USER]), ContactValidator.add(), validationHandler, async(req, res) => {
 
+    return res.json(await contactService.createContact(req.body, req.skUser))
+})
 
 module.exports = app;
