@@ -64,7 +64,7 @@ const add = () =>
 const addLogin = () =>
 {
   return [
-    body('password').not().isEmpty().withMessage('Password is required'),
+    body('pass').not().isEmpty().withMessage('Password is required'),
     body('email').custom( email => {      
                 
         if(email && !(email.match(emailValidation)))

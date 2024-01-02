@@ -6,5 +6,5 @@ let createContact = async(data) =>
 }
 
 module.exports = {
-    createContact : createContact
+    createContact : createContact,
 }

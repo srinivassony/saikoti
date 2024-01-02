@@ -29,7 +29,7 @@ app.get('/api/resend/invite/user/:id', UserValidator.getId(), validationHandler,
     return res.json(await userService.reSendInviteUser(req.params.id))
 });
 
-app.post('/api/login/user', UserValidator.addLogin(), validationHandler,  async(req, res) =>{
+app.post('/api/login/user', UserValidator.addLogin(), validationHandler,  async(req, res) => {
 
    return res.json(await userService.UserLoginDetails(req.body))
 })
@@ -38,6 +38,7 @@ app.post('/api/reset/password', UserValidator.resetPassword(), validationHandler
 
    return res.json(await userService.ResetPassword(req.body))
 })
+
 
 let myInit = async (req, res, next) => 
 {
@@ -113,6 +114,11 @@ app.use(myInit);
 app.post('/api/create/contact', Authentication.authorize([userType.USER]), ContactValidator.add(), validationHandler, async(req, res) => {
 
     return res.json(await contactService.createContact(req.body, req.skUser))
+})
+
+app.post('/api/update/user', Authentication.authorize([userType.USER]), async(req, res) =>{
+
+   return res.json(await userService.updateUser(req.body, req.skUser))
 })
 
 module.exports = app;

@@ -218,6 +218,7 @@ let UserLoginDetails = async (reqParams) =>
     }
     catch (error) 
     {
+        console.log(error);
         return {
             status: Status.FAIL,
             message: error.message
@@ -257,10 +258,88 @@ let ResetPassword = async (reqParams) =>
     }
 }
 
+let updateUser = async(reqParams, owner) =>
+{
+  try 
+    {
+        let id = reqParams.id ? reqParams.id : null;
+
+        if (!id)
+        {
+            return {
+               status : Status.FAIL,
+               message : "id is required"
+            };
+        }
+
+        let params = 
+        {
+            updatedAt: new Date(),
+            updatedBy : owner.uuid
+
+        }
+
+        if (reqParams.userName) 
+        {
+            params.userName = reqParams.userName
+        }
+
+        if (reqParams.email)
+        {
+            params.email = reqParams.email
+        }
+
+       if(reqParams.phone)
+       {
+         params.phone = reqParams.phone
+       }
+
+       if (reqParams.dob)
+       {
+         params.dob = reqParams.dob
+       }
+
+       if (reqParams.country)
+       {
+         params.country = reqParams.country
+       }
+
+       if (reqParams.state)
+       {
+         params.state = reqParams.state
+       }
+
+       if (reqParams.gender)
+       {
+         params.gender = reqParams.gender
+       }
+
+        let updateUserDetails = await db.updateUser(id, params);
+
+        return {
+            status: Status.SUCCESS,
+            data: {
+                updateUserDetails: updateUserDetails
+            },
+            message : " User details updated successfully"
+        };
+    }
+    catch (error)
+    {
+
+        return {
+            status : Status.FAIL,
+            message : error.message
+        };
+    }
+
+}
+
 module.exports = {
     createUser: createUser,
     InviteUser: InviteUser,
     reSendInviteUser : reSendInviteUser,
     UserLoginDetails : UserLoginDetails,
-    ResetPassword : ResetPassword
+    ResetPassword : ResetPassword,
+    updateUser : updateUser
 }

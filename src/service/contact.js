@@ -40,5 +40,5 @@ let createContact = async (reqParams, owner) =>
 }
 
 module.exports = {
-  createContact: createContact
+  createContact: createContact,
 }
