@@ -1,130 +1,219 @@
 const express = require('express');
 let app = express();
 const path = require('path');
-const config = require ('../../config');
-const validationHandler = require('../validations/validation_handler');
-const UserValidator = require('../validations/user');
-const ContactValidator = require('../validations/contact');
-const Authentication = require('../service/authentication');
-const common = require('../utills/utils');
-const userType = common.userType;
+const session = require('express-session');
+const flash = require('connect-flash');
 const bodyParser = require("body-parser");
+let userService = require('../service/user');
+let userDb = require('../database/db/user');
+let contactService = require('../service/contact');
+
+//middelwares
+app.use(flash());
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true,  limit: '50mb' }));
 app.set('views', path.join(__dirname, '../../views'))
 app.set('view engine', 'ejs');
 app.engine('ejs', require('ejs').renderFile);
+app.use(express.static(path.join(__dirname, '../../views')));
 
-app.use('/css', express.static('views'));
-app.use('/plugins', express.static('views'));
-app.use('/', express.static('views'));
+app.use(session({
+    key:'session',
+    secret: 'session_cookie_secret',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {maxAge: 6000000}
+}));
 
-let userService = require('../service/user');
-let contactService = require('../service/contact');
-
-app.get('/', function(req, res) {
-    res.render('login');
-  });
-
-app.post('/api/create/user', UserValidator.add(), validationHandler, async (req, res) => {
-   
-    return res.json(await userService.createUser(req.body))
-})
-
-app.get('/api/update/invite/user/:id',  UserValidator.getId(), validationHandler, async (req, res) => {
-   
-    return res.json(await userService.InviteUser(req.params.id))
-});
-
-app.get('/api/resend/invite/user/:id', UserValidator.getId(), validationHandler, async (req, res) => {
-   
-    return res.json(await userService.reSendInviteUser(req.params.id))
-});
-
-app.post('/api/login/user', UserValidator.addLogin(), validationHandler,  async(req, res) =>{
-
-   return res.json(await userService.UserLoginDetails(req.body))
-})
-
-app.post('/api/reset/password', UserValidator.resetPassword(), validationHandler,  async(req, res) =>{
-
-   return res.json(await userService.ResetPassword(req.body))
-})
-
-let myInit = async (req, res, next) => 
+app.get('/', async (req, res) =>
 {
-	try
+	let users = await userDb.getUserDetails();
+
+	res.render('pages/index', {
+		isAuthenticated: false,
+		users : users.length
+	});
+});
+
+app.get('/register', async (req, res) =>
+{
+	let message = req.flash('error');
+	if (message.length > 0)
 	{
-
-		let skRole = req.headers['role'];
-		let skToken = req.headers['sktoken'];
-
-		if (!skToken)
-		{
-			return res.json({
-				status: 0,
-				message: "Authorization is required."
-			});
-		}
-		else if (skToken)
-		{
-			await Authentication.validateToken(skToken, async function (tokenResult) 
-			{
-				if (tokenResult.status == 1)
-				{
-					let tokenUser = tokenResult.user;
-					
-					
-					let newToken = await Authentication.generateToken(tokenUser);
-
-					if (newToken)
-					{
-						res.append('newtoken', newToken);
-
-						req.tokens = {
-							...req.tokens,
-							sktoken: newToken,
-							role: skRole
-						};
-					}
-
-					req.skUser = tokenUser;
-					req.authId = tokenUser.uuid || null;
-
-					let userRole = req.skUser.role;
-
-					if(userRole.search(skRole) < 0)
-					{
-						return res.json({
-							status: 0,
-							message: "Authorization failed: Do not have access for this API"
-						});
-					}
-
-					next();
-				}
-				else if (tokenResult.status == 0)
-				{
-					return res.json(tokenResult);
-				}
-			});
-		}
-	}
-	catch (error)
+		message = message[0];
+	} else
 	{
-	
-		return res.json({
-			status: 0,
-			message: error.message,
-		});
+		message = null;
 	}
-};
 
-app.use(myInit);
+	res.render('pages/register', {
+		isAuthenticated: false,
+		errorMessage: message
+	});
+});
 
-app.post('/api/create/contact', Authentication.authorize([userType.USER]), ContactValidator.add(), validationHandler, async(req, res) => {
+app.get('/login',  (req, res) =>
+{
+	let message = req.flash('error');
+	if (message.length > 0)
+	{
+		message = message[0];
+	} else
+	{
+		message = null;
+	}
 
-    return res.json(await contactService.createContact(req.body, req.skUser))
-})
+	let message1 = req.flash('success');
+	if (message1.length > 0)
+	{
+		message1 = message1[0];
+	} 
+	else
+	{
+		message1 = null;
+	}
+
+	res.render('pages/login',{
+		isAuthenticated: false,
+		errorMessage: message,
+		sucessMessage: message1
+	});
+});
+
+app.get('/error-login',  (req, res) =>
+{
+	let message = req.flash('error');
+	if (message.length > 0)
+	{
+		message = message[0];
+	} else
+	{
+		message = null;
+	}
+
+	res.render('pages/login',{
+		isAuthenticated: false,
+		errorMessage: message
+	});
+});
+
+app.get('/dashboard',  (req, res) =>
+{
+	var name = req.session.name;
+	var id = req.session.id;
+
+	if (!req.session.isLoggedIn)
+	{
+		return res.redirect('/');
+	}
+
+	res.render('pages/dashboard', {
+		isAuthenticated: req.session.isLoggedIn,
+		username: name,
+		id: id
+	});
+});
+
+app.get('/active-account',  (req, res) =>
+{
+	let message = req.flash('error');
+	if (message.length > 0)
+	{
+		message = message[0];
+	} else
+	{
+		message = null;
+	}
+
+	let message1 = req.flash('success');
+	if (message1.length > 0)
+	{
+		message1 = message1[0];
+	} 
+	else
+	{
+		message1 = null;
+	}
+
+	res.render('pages/active-account', {
+		isAuthenticated: false,
+		errorMessage: message,
+		sucessMessage: message1
+	});
+});
+
+app.get('/reset-password',  (req, res) =>
+{
+	let message = req.flash('error');
+	if (message.length > 0)
+	{
+		message = message[0];
+	} else
+	{
+		message = null;
+	}
+
+	let message1 = req.flash('success');
+	if (message1.length > 0)
+	{
+		message1 = message1[0];
+	} 
+	else
+	{
+		message1 = null;
+	}
+
+	res.render('pages/reset-password',{
+		isAuthenticated: false,
+		errorMessage: message,
+		sucessMessage: message1
+	});
+});
+
+app.get('/change-password',  async(req, res) =>
+{
+	let message = req.flash('error');
+	if (message.length > 0)
+	{
+		message = message[0];
+	} else
+	{
+		message = null;
+	}
+
+	res.render('pages/change-password',{
+		isAuthenticated: false,
+		errorMessage: message
+	});
+});
+
+app.post('/api/login/user', userService.userLogin);
+
+app.post('/api/register/user', userService.createUser);
+
+app.post('/api/resend/invite/user', userService.reSendInviteUser);
+
+app.get('/api/update/invite/user/:id', userService.InviteUser);
+
+app.post('/api/reset/password', userService.resetPassword);
+
+app.post('/api/change/password', userService.changePassword);
+
+app.post('/logout', function (req, res)
+{
+	req.session.destroy(function (err)
+	{
+		if (err)
+		{
+			req.flash('error', err);
+
+            res.redirect('/error-login');
+		} 
+		else
+		{
+			res.redirect('/')
+		}
+	});
+});
 
 module.exports = app;

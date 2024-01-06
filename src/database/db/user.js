@@ -12,7 +12,7 @@ let createUser = async(data) =>
 
 let getUserDetails = async (id) =>
 {
-  return await User.query().select().where('id', id).first();
+  return await User.query().select();
 }
 
 let updateUser = async (id, data) =>
@@ -33,12 +33,18 @@ let getUserByEmailId = async(email) =>
   return await User.query().select().where('email', email).first();
 }
 
+let getUserDetailsById = async(id) =>
+{
+  return await User.query().select().where('id', id).first();
+}
+
 module.exports = {
   getExsitingUserDetails : getExsitingUserDetails,
   createUser: createUser,
   getUserDetails: getUserDetails,
   updateUser: updateUser,
   getUserLoginDetails : getUserLoginDetails,
-  getUserByEmailId : getUserByEmailId
+  getUserByEmailId : getUserByEmailId,
+  getUserDetailsById: getUserDetailsById
 
 }

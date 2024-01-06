@@ -48,7 +48,7 @@ module.exports = {
         expiresin: process.env.JWT_EXPIRESIN || (environmentConfig.JWT ? environmentConfig.JWT.EXPIRESIN : null) || "24h",
     },
     app_urls: {
-        userSignInUrl: process.env.USER_SIGNIN_URL || environmentConfig.SERVICE_URLS.USER_SIGNIN_UI
+        userSiginInUrl: process.env.USER_SIGNIN_URL || environmentConfig.SERVICE_URLS.USER_SIGNIN_UI
     },
     encrypt_secret_key: environmentConfig.ENCRYPT_SECRET_KEY || "saiKoti",
 
