@@ -1,0 +1,105 @@
+<!-- preloader start -->
+<div class="preloader">
+    <img src="images/preloader.gif" alt="preloader">
+</div>
+<!-- preloader end -->
+<!-- navigation -->
+<header>
+    <!-- top header -->
+    <div class="top-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <ul class="list-inline text-lg-right text-center">
+                        <% if (!isAuthenticated) { %>
+                            <li class="list-inline-item">
+                                <a href="/login">Sign In</a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="/register">Sign Up</a>
+                            </li>
+                            <% } else { %>
+                                <li class="list-inline-item">
+                                    <a href="mailto:info@companyname.com">info@companyname.com</a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="callto:1234565523">Call Us Now:
+                                        <span class="ml-2"> 123 456 5523</span>
+                                    </a>
+                                </li>
+                                <% }%>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- nav bar -->
+    <div class="navigation">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <% if (!isAuthenticated) { %>
+                    <a class="navbar-brand" href="/">
+                        <img src="images/logo.png" alt="logo">
+                    </a>
+                    <% } else { %>
+                        <a class="navbar-brand" href="/dashboard">
+                            <img src="images/logo.png" alt="logo">
+                        </a>
+                    <% } %>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <% if (!isAuthenticated) { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/">Home</a>
+                            </li>
+    
+                            <li class="nav-item">
+                                <a class="nav-link" href="/aboutus">About us</a>
+                            </li>
+    
+                            <li class="nav-item">
+                                <a class="nav-link" href="/FAQS">FAQs</a>
+                            </li>
+    
+                            <li class="nav-item">
+                                <a class="nav-link" href="/contact">contact</a>
+                            </li>
+                            <% } else { %>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/dashboard">Home</a>
+                                </li>
+        
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/about-us">About us</a>
+                                </li>
+        
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/FAQs">FAQs</a>
+                                </li>
+        
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/contact-info">contact</a>
+                                </li>
+                                <form action="/logout" method="post">
+                                    <li class="nav-item">
+                                        <button class="nav-link" type="submit" style="border: none;">logout</button>
+                                    </li>
+                                </form>
+                            <% } %>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+
+
+
+
+

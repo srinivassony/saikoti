@@ -3,148 +3,271 @@ const common = require('../utills/utils');
 const Status = common.Status;
 const Authentication = require('../service/authentication');
 const htmlTemplate = require('../utills/htmlTemplate');
-const smtp = require('../service/smtp')
+const smtp = require('../service/smtp');
+const { render } = require('../api/api');
+let phoneValidation = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+let emailValidation = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-let createUser = async (reqParams) => 
+
+exports.createUser = async (req, res) =>
 {
-    let email = reqParams.email ? reqParams.email.toLowerCase() : null;
-
-    let phone = reqParams.phone ? reqParams.phone : null;
-
-    let existingUserDetails = await db.getExsitingUserDetails(email, phone);
-
-    if (existingUserDetails) 
-    {
-        if (existingUserDetails.email == email) 
-        {
-            return {
-                status: Status.FAIL,
-                message: 'User email already exists. Try with different email.'
-            }
-        }
-        else if (existingUserDetails.phone == phone) 
-        {
-            return {
-                status: Status.FAIL,
-                message: 'Phone number already exists.'
-            }
-        }
-    }
-
-    let uuid = common.generateUUID();
-
-    let params = {
-        userName: reqParams.userName,
-        password: reqParams.password,
-        uuid: uuid,
-        email: email,
-        phone: phone,
-        dob: reqParams.dob,
-        country: reqParams.country,
-        state: reqParams.state,
-        gender: reqParams.gender,
-        role: 'USER',
-        createdAt: new Date(),
-        createdBy: uuid
-    }
-
-    let user = await db.createUser(params);
-
-    let tokenUser = {
-        id: user.id,
-        name: user.userName,
-        email: user.email,
-        role: user.role,
-        uuid: user.uuid
-    };
-
-    let token = await Authentication.generateToken(tokenUser);
-
-    let data = {
-        ...tokenUser,
-        token: token
-    }
-
     try
     {
-        var htmlData = {
-            name: user.userName ? user.userName : '',
-            id: user.id ? user.id : null
-        };
+        let userName = req.body.userName ? req.body.userName : null;
+        let email = req.body.email ? req.body.email.toLowerCase() : null;
+        let phone = req.body.phone ? req.body.phone : null;
+        let password = req.body.pass ? req.body.pass : null;
+        let dob = req.body.dob ? req.body.dob : null;
+        let country = req.body.country ? req.body.country : null;
+        let state = req.body.state ? req.body.state : null;
+        let gender = req.body.gender ? req.body.gender : null;
 
-        let emailSubject = `${user.userName} you are invited to SaiKotiOnline`;
-        let emailBody = htmlTemplate.generateUserInvitation(htmlData);
+        if (!email)
+        {
+            req.flash('error', 'Email is required.');
+        
+            res.redirect('/register');
+        }
+        else if (email && !(email.match(emailValidation)))
+        {
+            req.flash('error', 'Invalid email address');
 
-        let userEmailParams = {
-            email: user.email,
-            subject: emailSubject,
-            message: emailBody,
-        };
+            res.redirect('/register');
+        }
+        else if (email && email.toString().length > 50)
+        {
+            req.flash('error', 'Email maximum character limit is 50.');
 
-        let x = await smtp.sendEmail(userEmailParams);
+            res.redirect('/register');
+        }
 
+        if (!password)
+        {
+            req.flash('error', 'Password is required.');
+        
+            res.redirect('/register');
+        }
+        else if (password && password.toString().length > 15)
+        {
+            req.flash('error', 'Password maximum character limit is 15.');
+
+            res.redirect('/register');
+        }
+
+        if (!dob)
+        {
+            req.flash('error', 'Password is required.');
+        
+            res.redirect('/register');
+        }
+
+        if (!country)
+        {
+            req.flash('error', 'country is required.');
+        
+            res.redirect('/register');
+        }
+        else if (country && country.toString().length > 30)
+        {
+            req.flash('error', 'country maximum character limit is 30.');
+
+            res.redirect('/register');
+        }
+
+        if (!state)
+        {
+            req.flash('error', 'state is required.');
+        
+            res.redirect('/register');
+        }
+        else if (state && state.toString().length > 30)
+        {
+            req.flash('error', 'state maximum character limit is 30.');
+
+            res.redirect('/register');
+        }
+
+        if (!gender)
+        {
+            req.flash('error', 'gender is required.');
+        
+            res.redirect('/register');
+        }
+
+        if (!phone)
+        {
+            req.flash('error', 'phone is required.');
+        
+            res.redirect('/register');
+        }
+        else if (phone && !(phone.match(phoneValidation)))
+        {
+            req.flash('error', 'Invalid phone number');
+
+            res.redirect('/register');
+        }
+
+        if (!userName)
+        {
+            req.flash('error', 'userName is required.');
+        
+            res.redirect('/register');
+        }
+        if(userName.toString().length < 2 )
+        {
+            throw new Error( 'User name minimum character limit is 2')   
+        }
+        else if (userName && userName.toString().length > 30)
+        {
+            req.flash('error', 'userName maximum character limit is 30.');
+
+            res.redirect('/register');
+        }
+
+        let existingUserDetails = await db.getExsitingUserDetails(email, phone);
+
+        // if (existingUserDetails) 
+        // {
+        //     if (existingUserDetails.email == email) 
+        //     {
+        //         req.flash('error', 'User email already exists. Try with different email.');
+
+        //         res.redirect('/register');
+        //     }
+        //     else if (existingUserDetails.phone == phone) 
+        //     {
+        //         req.flash('error', 'Phone number already exists.');
+
+        //         res.redirect('/register');
+        //     }
+        // }
+
+        let uuid = common.generateUUID();
+
+        let params = {
+            userName: userName,
+            password: password,
+            uuid: uuid,
+            email: email,
+            phone: phone,
+            dob: dob,
+            country: country,
+            state: state,
+            gender: gender,
+            role: 'USER',
+            createdAt: new Date(),
+            createdBy: uuid
+        }
+
+        let user = await db.createUser(params);
+
+        try
+        {
+            var htmlData = {
+                name: user.userName ? user.userName : '',
+                id: user.id ? user.id : null
+            };
+
+            let emailSubject = `${user.userName} you are invited to SaiKotiOnline`;
+            let emailBody = htmlTemplate.generateUserInvitation(htmlData);
+
+            let userEmailParams = {
+                email: user.email,
+                subject: emailSubject,
+                message: emailBody,
+            };
+
+            let x = await smtp.sendEmail(userEmailParams);
+
+        }
+        catch (error)
+        {
+            req.flash('error', error.message);
+
+            res.redirect('/register');
+        }
+
+        res.redirect('/active-account');
     }
-    catch (error)
+    catch (error) 
     {
         console.log(error)
-    }
+        req.flash('error', error.message);
 
-    return {
-        status: Status.SUCCESS,
-        data: {
-            user : data
-        }
+        res.redirect('/register');
     }
 }
 
-let InviteUser = async (id) => 
-{   
-    let userDetails = await db.getUserDetails(id);
-
-    if(!userDetails)
-    {
-        return {
-            status: Status.FAIL,
-            message: 'User details not found.'
-        }
-    }
-
-    let params = {
-        isRegistered: 1,
-        isInvited: 1,
-        inviteOn: new Date(),
-        updatedAt: new Date(),
-        updatedBy: userDetails.uuid
-    }
-
-    let updateUser = await db.updateUser(id, params);
-
-    return {
-        status: Status.SUCCESS,
-        message : 'update successful.'
-    }
-}
-
-let reSendInviteUser = async (id) => 
+exports.InviteUser = async (req, res) =>
 {   
     try
     {
-     let userDetails = await db.getUserDetails(id);
+        let userId = req.params.id ? req.params.id : null;
 
-    if(!userDetails)
-     {
-        return {
-            status: Status.FAIL,
-            message: 'User details not found.'
+        if (!userId)
+        {
+            req.flash('error', 'User id is requried.');
+
+            res.redirect('/active-account');
         }
-     }
+
+        let userDetails = await db.getUserDetailsById(userId);
+
+        if (!userDetails)
+        {
+            req.flash('error', 'User not found.');
+
+            res.redirect('/active-account');
+        }
+
+        let params = {
+            isRegistered: 1,
+            isInvited: 1,
+            inviteOn: new Date(),
+            updatedAt: new Date(),
+            updatedBy: userDetails.uuid
+        }
+
+        let updateUser = await db.updateUser(userId, params);
+
+        res.redirect('/login');
+    }
+    catch (error) 
+    {
+        req.flash('error', error.message);
+
+        res.redirect('/login');
+    }
+}
+
+exports.reSendInviteUser = async (req, res) =>
+{
+    try
+    {
+        let email = req.body.email ? req.body.email : null;
+
+        if (!email)
+        {
+            req.flash('error', 'Email is required.');
+
+            res.redirect('/active-account');
+        }
+
+        let userDetails = await db.getUserByEmailId(email);
+
+        if (!userDetails)
+        {
+            req.flash('error', 'There is no user with such email.');
+
+            res.redirect('/active-account');
+        }
 
         var htmlData = {
             name: userDetails.userName ? userDetails.userName : '',
             id: userDetails.id ? userDetails.id : null
         };
 
-        let emailSubject = `${userDetails.userName} you are invited to SaiKotiOnline`; 
+        let emailSubject = `${userDetails.userName} you are invited to SaiKotiOnline`;
         let emailBody = htmlTemplate.generateUserInvitation(htmlData);
 
         let userEmailParams = {
@@ -155,43 +278,66 @@ let reSendInviteUser = async (id) =>
 
         let x = await smtp.sendEmail(userEmailParams);
 
-        return{
-          status : Status.SUCCESS,
-          message : 'Invitation email is sent to your email address'
-        }
+        req.flash('success', 'Invitation email is sent to your email address');
+
+        res.redirect('/active-account');
     }
-    catch(error)
+    catch (error)
     {
-      return {
-         status : Status.FAIL,
-         message : error.message
-      }
+        return {
+            status: Status.FAIL,
+            message: error.message
+        }
     }
 }
 
-let UserLoginDetails = async (reqParams) => 
+exports.userLogin = async (req, res) =>
 {
     try 
     {
-        let email  = reqParams.email ? reqParams.email : null;
-        let password = reqParams.pass ? reqParams.pass: null;
+        let email  = req.body.email ? req.body.email : null;
+        let password = req.body.pass ? req.body.pass: null;
+
+        if (!email)
+        {
+            req.flash('error', 'Email is required.');
+        
+            res.redirect('/error-login');
+        }
+        else if (email && !(email.match(emailValidation)))
+        {
+            req.flash('error', 'Invalid email address');
+
+            res.redirect('/error-login');
+        }
+        else if (email && email.length > 50)
+        {
+            req.flash('error', 'Email maximum character limit is 50.');
+
+            res.redirect('/error-login');
+        }
+
+        if (!password)
+        {
+            req.flash('error', 'password is required.');
+
+            res.redirect('/error-login');
+        }
 
         let user = await db.getUserLoginDetails(email, password);
 
         if (!user) 
         {
-            return {
-                status: Status.FAIL,
-                message: 'Username or password is incorrect.'
-            }
+            req.flash('error', 'Username or password is incorrect.');
+
+            res.redirect('/error-login');
         }
 
         if (user.isRegistered == 0 || user.isInvited == 0 || user.inviteOn == null) 
         {
-            return {
-                status: Status.FAIL,
-                message: 'User login failed. Try to activate your account by click on to the resend link'
-            }
+            req.flash('error', 'User login failed. Try to activate your account');
+
+            res.redirect('/active-account');
         }
 
         let tokenUser = {
@@ -209,12 +355,13 @@ let UserLoginDetails = async (reqParams) =>
             token: token
         }
 
-        return {
-            status: Status.SUCCESS,
-            data: {
-                user: data
-            }
-        }
+        req.session.isLoggedIn = true;
+        req.session.name = user.username;
+        req.session.id = user.id;
+        req.session.save();
+
+        res.redirect('/dashboard');
+       
     }
     catch (error) 
     {
@@ -225,42 +372,122 @@ let UserLoginDetails = async (reqParams) =>
     }
 }
 
-let ResetPassword = async (reqParams) =>
+exports.resetPassword = async (req, res) =>
 {
     try 
     {
-        let email = reqParams.email ? reqParams.email : null;
+        let email = req.body.email ? req.body.email : null;
 
-        let userDetails = await db.getUserByEmailId(email);
+        if (!email)
+        {
+            req.flash('error', 'Email is requried.');
 
-        if (!userDetails)
+            res.redirect('/reset-password');
+        }
+
+        let user = await db.getUserByEmailId(email);
+
+        if (!user)
          {
-            return {
-                status: Status.FAIL,
-                message: "User email not found"
-            }
+            req.flash('error', 'There is no user with such email.');
+
+            res.redirect('/reset-password');
         }
 
-        return {
-          status : Status.SUCCESS,
-          data : {
-            userDetails : userDetails
-          }
+        try
+        {
+            var htmlData = {
+                name: user.userName ? user.userName : '',
+                id: user.id ? user.id : null,
+                email: user.email
+            };
+
+            let emailSubject = `Password reset for Saikoti`;
+            let emailBody = htmlTemplate.generateResetPassword(htmlData);
+
+            let userEmailParams = {
+                email: user.email,
+                subject: emailSubject,
+                message: emailBody,
+            };
+
+            let x = await smtp.sendEmail(userEmailParams);
+
         }
+        catch (error)
+        {
+            req.flash('error', error.message);
+
+            res.redirect('/reset-password');
+        }
+
+        req.flash('success', 'Reset password email is sent to your email address');
+
+        res.redirect('/reset-password');
     } 
     catch (error) 
     {
-        return {
-            status: Status.FAIL,
-            message: error.message
-        }
+        req.flash('error', error.message);
+
+        res.redirect('/reset-password');
     }
 }
 
-module.exports = {
-    createUser: createUser,
-    InviteUser: InviteUser,
-    reSendInviteUser : reSendInviteUser,
-    UserLoginDetails : UserLoginDetails,
-    ResetPassword : ResetPassword
+exports.changePassword = async (req, res) =>
+{
+    try 
+    {
+        let email = req.body.email ? req.body.email : null;
+
+        let password = req.body.pass ? req.body.pass : null;
+
+        if (!email)
+        {
+            req.flash('error', 'Email is requried.');
+
+            res.redirect('/change-password');
+        }
+
+        if (!password)
+        {
+            req.flash('error', 'Password is requried.');
+
+            res.redirect('/change-password');
+        }
+
+        let user = await db.getUserByEmailId(email);
+
+        if (!user)
+         {
+            req.flash('error', 'There is no user with such email.');
+
+            res.redirect('/change-password');
+        }
+
+        if (user.isRegistered == 0 || user.isInvited == 0 || user.inviteOn == null) 
+        {
+            req.flash('error', 'User login failed. Try to activate your account');
+
+            res.redirect('/change-password');
+        }
+
+        let params = {
+            password : req.body.pass,
+            updatedAt : new Date(),
+            updatedBy: user.uuid
+        }
+
+        let updateUser = db.updateUser(user.id, params);
+
+        req.flash('success', 'Password was changed successfuly.');
+
+        res.redirect('/login');
+    } 
+    catch (error) 
+    {
+        req.flash('error', error.message);
+
+        res.redirect('/change/password');
+    }
 }
+

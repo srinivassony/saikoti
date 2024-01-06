@@ -58,10 +58,13 @@ function authorize(roles)
         else
         {
 
+            res.redirect('/error-login')
+
             return res.json({
                 status: 0,
                 message: "Authorization failed: Do not have access for this API",
-            });
+            })
+
         }
     };
 }
@@ -70,10 +73,13 @@ function validateRole(req, roles = [])
 {
     if (!req.skUser || !req.skUser.role)
     {
+        console.log('here1')
         return false;
     }
     else if (roles.length == 0)
     {
+        console.log('here2')
+
         return false;
     }
 

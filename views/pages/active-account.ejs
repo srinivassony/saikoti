@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+
+<!-- Mirrored from demo.themefisher.com/biztrox-bootstrap/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 02 Jan 2024 06:14:05 GMT -->
+
+<head>
+    <meta charset="utf-8">
+    <title>BIZTROX</title>
+
+
+    <!-- mobile responsive meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <%- include('links'); %>
+
+    <style>
+        .form-popup {
+            display: none;
+          }
+    </style>
+
+</head>
+
+<body>
+
+    <%- include('header'); %>
+
+        <!-- skill -->
+        <section class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="section-title-sm">Best Service</h5>
+                        <h2 class="section-title section-title-border-half">Activate the saiKoti account!</h2>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="mb-40">
+                            <p class="text-dark">
+                                Thanks for your interest.
+                                Please check your Email and activate your account.
+                                (Kindly check your Spam folder)
+                                Incase if you have not received confirmation mail ,Reach us at <a
+                                    href="mailto:xxxx">xxxx</a> or call at <a href="tel:9885xxxx10">9885xxxx10</a> for
+                                further assistance.
+                            </p>
+
+                            <% if (errorMessage) { %>
+
+                                <div class="col-md-10" >
+                                    <p class="text" style="color: red;font-weight:bold;border:none;text-align:center;">
+                                        <%= errorMessage %>
+                                    </p>
+                                    <div class="signup-form">
+                                        <form action="/api/resend/invite/user" class="row" method="post" enctype="application/x-www-form-urlencoded">
+                                            <div class="col-12">
+                                                <h4>User account activate</h4>
+                                            </div>
+                                            <div class="col-12">
+                                                <input type="email" class="form-control" id="email" name="email" placeholder="Email Address">
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <button class="btn btn-primary btn-sm">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <% } else if(sucessMessage){ %>
+                            
+                                    <p class="text" style="color: green;font-weight:bold;border:none;">
+                                        <%= sucessMessage %>  <a href="/login"> click here to Sign In</a></p>
+                                    </p>
+                            
+                                    <%} else { %>
+                            
+                                        <p class="text-dark">
+                                            If you have not recevie the email. Please click here to <button class="btn btn-primary btn-sm"
+                                                id="addBook">resend the email</button>
+                                        </p>
+                                        <%}%>
+                        </div>
+                    </div>
+
+                    <div class="col-md-7 form-popup" id="popUpForm">
+                        <div class="signup-form">
+                            <form action="/api/resend/invite/user" class="row" method="post" enctype="application/x-www-form-urlencoded">
+                                <div class="col-12">
+                                    <h4>User account activate</h4>
+                                </div>
+                                <div class="col-12">
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email Address">
+                                </div>
+                                <div class="col-sm-4">
+                                    <button class="btn btn-primary btn-sm">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- /skill -->
+        
+
+        <%- include('footer'); %>
+        <%- include('scripts'); %>
+        <script>
+            //define button and form//
+    const popUpForm = document.getElementById("popUpForm");
+    var button = document.getElementById("addBook");
+    //Form Pop-Up//
+    //button.onclick = () => {window.open('hello!')};//
+
+    //button function//
+    button.addEventListener("click", function ()
+    {
+        document.getElementById("popUpForm").style.display = "block";
+
+    });
+        </script>
+
+</body>
+
+</html>
