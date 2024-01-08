@@ -126,21 +126,21 @@ exports.createUser = async (req, res) =>
 
         let existingUserDetails = await db.getExsitingUserDetails(email, phone);
 
-        // if (existingUserDetails) 
-        // {
-        //     if (existingUserDetails.email == email) 
-        //     {
-        //         req.flash('error', 'User email already exists. Try with different email.');
+        if (existingUserDetails) 
+        {
+            if (existingUserDetails.email == email) 
+            {
+                req.flash('error', 'User email already exists. Try with different email.');
 
-        //         res.redirect('/register');
-        //     }
-        //     else if (existingUserDetails.phone == phone) 
-        //     {
-        //         req.flash('error', 'Phone number already exists.');
+                res.redirect('/register');
+            }
+            else if (existingUserDetails.phone == phone) 
+            {
+                req.flash('error', 'Phone number already exists.');
 
-        //         res.redirect('/register');
-        //     }
-        // }
+                res.redirect('/register');
+            }
+        }
 
         let uuid = common.generateUUID();
 
