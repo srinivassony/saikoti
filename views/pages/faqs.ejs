@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+
+<!-- Mirrored from demo.themefisher.com/biztrox-bootstrap/about-2.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 02 Jan 2024 06:14:40 GMT -->
+
+<head>
+    <meta charset="utf-8">
+    <title>BIZTROX</title>
+
+
+    <!-- mobile responsive meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <%- include('links'); %>
+
+</head>
+
+<body>
+    <%- include('header'); %>
+
+        <section class="page-title overlay" style="background-image: url(images/background/page-title.jpg);">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 text-center">
+                        <h2 class="text-white font-weight-bold">Frequently Asked Questions</h2>
+                        <ol class="breadcrumb">
+                            <li>
+                                <a href="/">Home</a>
+                            </li>
+                            <li>FAQS</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    <!-- faqs -->
+<section class="section">
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-lg-7">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <div id="accordion" class="mb-md-50">
+                    <!-- collapse cards -->
+                    <div class="card border-0 mb-4">
+                        <div class="card-header bg-gray border p-0">
+                            <a class="card-link h5 d-block text-dark mb-0 py-10 px-4" data-toggle="collapse" href="#collapseOne">
+                                <i class="ti-minus text-primary mr-2"></i> What is Saikoti.com?
+                            </a>
+                        </div>
+                        <div id="collapseOne" class="collapse show" data-parent="#accordion">
+                            <div class="card-body">
+                                Saikoti.com is an online platform providing digital infrastructure for Sai devotees to compose and submit "SaiKoti"
+                                writings. It functions as a web-based service.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card border-0 mb-4">
+                        <div class="card-header bg-gray border p-0">
+                            <a class="collapsed card-link h5 d-block text-dark mb-0 py-10 px-4" data-toggle="collapse" href="#collapseTwo">
+                                <i class="ti-plus text-primary mr-2"></i>  Is this a free service?
+                            </a>
+                        </div>
+                        <div id="collapseTwo" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                Saikoti.com offers a dual-tiered service model. It provides free access to registered users, with over 1000 individuals
+                                availing themselves of this complimentary service. Additionally, Saikoti.com offers a subscription-based plan at a
+                                monthly fee of Rs.18/- for premium access. The platform is supplemented by advertisement revenue.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card border-0 mb-4">
+                        <div class="card-header bg-gray border p-0">
+                            <a class="collapsed card-link h5 d-block text-dark mb-0 py-10 px-4" data-toggle="collapse" href="#collapseThree">
+                                <i class="ti-plus text-primary mr-2"></i> What will happen once I hit the 1 crore mark?
+                            </a>
+                        </div>
+                        <div id="collapseThree" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                Upon achieving the milestone of 1 crore SaiKoti, Saikoti.com will issue a formal certificate, either in physical or
+                                digital form, acknowledging the individual's name and accomplishment.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card border-0 mb-4">
+                        <div class="card-header bg-gray border p-0">
+                            <a class="collapsed card-link h5 d-block text-dark mb-0 py-10 px-4" data-toggle="collapse" href="#collapseFour">
+                                <i class="ti-plus text-primary mr-2"></i>  I paid for one month and don't want to renew next month. What happens?
+                            </a>
+                        </div>
+                        <div id="collapseFour" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                Subscribers who opt not to renew their service after the initial month will lose access to the Saikoti.com platform.
+                                This means they will no longer be able to write SaiKoti through the platform unless they renew their subscription by
+                                making a subsequent payment.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card border-0 mb-4">
+                        <div class="card-header bg-gray border p-0">
+                            <a class="collapsed card-link h5 d-block text-dark mb-0 py-10 px-4" data-toggle="collapse" href="#collapseFive">
+                                <i class="ti-plus text-primary mr-2"></i>  I have a question which is not mentioned above. What to do?
+                            </a>
+                        </div>
+                        <div id="collapseFive" class="collapse" data-parent="#accordion">
+                            <div class="card-body">
+                                For any inquiries not addressed in the provided FAQs, individuals are encouraged to contact Saikoti.com via phone at
+                                9885 **** during regular business hours, five days a week, or by sending an email to contact@saikoti.com. The platform
+                                commits to respond within 48 hours.d est laborum. sed perspiciatis
+                                unde omnisiste natus error sit voluptatem accusantium.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="rounded p-5 box-shadow position-sticky" style="top:50px;">
+                    <!-- form -->
+                    <form action="#" class="row">
+                        <div class="col-12">
+                            <h4 class="mb-20">Ask Your Questions</h4>
+                        </div>
+                        <div class="col-12">
+                            <input type="text" class="form-control" name="name" id="name" placeholder="Name" required>
+                        </div>
+                        <div class="col-12">
+                            <input type="email" class="form-control" name="email" id="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="col-12">
+                            <textarea name="question" id="question" class="form-control pt-2" placeholder="Your Question Here..." style="height: 130px;"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button class="btn btn-primary" type="submit" value="send">Ask Question</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /faqs -->
+
+        <%- include('footer'); %>
+            <%- include('scripts'); %>
+</body>
+</html>

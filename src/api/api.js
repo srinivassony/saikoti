@@ -187,6 +187,27 @@ app.get('/change-password',  async(req, res) =>
 	});
 });
 
+app.get('/about-us',  async(req, res) =>
+{
+	res.render('pages/about-us',{
+		isAuthenticated: false
+	});
+});
+
+app.get('/FAQs',  async(req, res) =>
+{
+	res.render('pages/faqs',{
+		isAuthenticated: false
+	});
+});
+
+app.get('/contact-info',  async(req, res) =>
+{
+	res.render('pages/contact',{
+		isAuthenticated: false
+	});
+});
+
 app.post('/api/login/user', userService.userLogin);
 
 app.post('/api/register/user', userService.createUser);
