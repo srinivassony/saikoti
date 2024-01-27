@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Call on Page Refresh</title>
+</head>
+<body>
+
+    <input type="text" id="input1" placeholder="Input 1">
+    <input type="text" id="input2" placeholder="Input 2">
+    <input type="text" id="input3" placeholder="Input 3">
+    <input type="text" id="input4" placeholder="Input 4">
+    <input type="text" id="input5" placeholder="Input 5">
+
+    <script>
+        // Function to make the API call
+        function makeAPICall(inputValues) {
+            // Replace 'your-api-endpoint' with the actual API endpoint you want to call
+            fetch('your-api-endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ inputs: inputValues }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Process the API response data as needed
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Function to handle beforeunload event
+        function handleBeforeUnload() {
+            // Store input values in sessionStorage
+            for (let i = 1; i <= 5; i++) {
+                const inputBox = document.getElementById('input' + i);
+                sessionStorage.setItem('input' + i, inputBox.value);
+            }
+        }
+
+        // Function to handle page load
+        function handlePageLoad() {
+            let inputValues = [];
+
+            // Retrieve values from sessionStorage
+            for (let i = 1; i <= 5; i++) {
+                const inputValue = sessionStorage.getItem('input' + i);
+
+                if (inputValue) {
+                    inputValues.push(inputValue);
+                    document.getElementById('input' + i).value = inputValue;
+                }
+            }
+console.log('inputValues',inputValues)
+            // Check if all input values are present
+            if (inputValues.length === 5) {
+                // Make the API call
+                makeAPICall(inputValues);
+            }
+        }
+
+        // Add event listener for beforeunload
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        // Add event listener for page load
+        window.addEventListener('load', handlePageLoad);
+    </script>
+
+</body>
+</html>
