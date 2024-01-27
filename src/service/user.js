@@ -1,4 +1,5 @@
 const db = require('../database/db/user');
+const countDB = require('../database/db/count');
 const common = require('../utills/utils');
 const Status = common.Status;
 const Authentication = require('../service/authentication');
@@ -126,21 +127,21 @@ exports.createUser = async (req, res) =>
 
         let existingUserDetails = await db.getExsitingUserDetails(email, phone);
 
-        // if (existingUserDetails) 
-        // {
-        //     if (existingUserDetails.email == email) 
-        //     {
-        //         req.flash('error', 'User email already exists. Try with different email.');
+        if (existingUserDetails) 
+        {
+            if (existingUserDetails.email == email) 
+            {
+                req.flash('error', 'User email already exists. Try with different email.');
 
-        //         res.redirect('/register');
-        //     }
-        //     else if (existingUserDetails.phone == phone) 
-        //     {
-        //         req.flash('error', 'Phone number already exists.');
+                res.redirect('/register');
+            }
+            else if (existingUserDetails.phone == phone) 
+            {
+                req.flash('error', 'Phone number already exists.');
 
-        //         res.redirect('/register');
-        //     }
-        // }
+                res.redirect('/register');
+            }
+        }
 
         let uuid = common.generateUUID();
 
@@ -358,6 +359,7 @@ exports.userLogin = async (req, res) =>
         req.session.isLoggedIn = true;
         req.session.name = user.username;
         req.session.id = user.id;
+        req.session.uuid =  user.uuid;
         req.session.save();
 
         res.redirect('/dashboard');
@@ -491,3 +493,75 @@ exports.changePassword = async (req, res) =>
     }
 }
 
+
+exports.addCount = async (reqParams) =>
+{
+    try
+    {
+        let uuid = reqParams.uuid ? reqParams.uuid : null;
+        console.log('uuid',uuid)
+
+        if (!uuid)
+        {
+            req.flash('error', 'params are required.');
+
+            res.redirect('/dashboardInfo');
+        }
+
+        let getCount = await countDB.getCounts(uuid);
+        console.log('getCount',getCount)
+
+        let id = getCount && getCount.id ? getCount.id : null;
+
+        if(!getCount)
+        {
+            let params = {
+                page: 1,
+                noOfCount: 1,
+                uuid: uuid,
+                createdAt: new Date(),
+                createdBy: uuid
+            }
+
+            let addCountInfo = await countDB.addCount(params);
+console.log('addCountInfo',addCountInfo)
+            return {
+                status : Status.SUCCESS,
+                data : {
+                    count : addCountInfo
+                }
+            }
+        }
+        else
+        {
+            // let count = 5 * Number(Number(getCount.page));
+            // console.log('count',count)
+            // let pageNo  = Number(Number(getCount.noOfCount))  == count ? Number(Number(getCount.page)) + 1 : Number(Number(getCount.page));
+            // console.log('pageNo',pageNo)
+
+            let params = {
+                noOfCount: Number(Number(getCount.noOfCount)) + 1,
+                uuid: uuid,
+                updatedAt: new Date(),
+                updatedBy: uuid
+            }
+
+            let updateCount = await countDB.updateCount(id, params);
+
+            return {
+                status : Status.SUCCESS,
+                data : {
+                    count : updateCount
+                }
+            }
+        }
+    }
+    catch (error) 
+    {
+        console.log(error)
+        return {
+            status: Status.FAIL,
+            message: error.message
+        }
+    }
+}

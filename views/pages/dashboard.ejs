@@ -1,31 +1,147 @@
 <!DOCTYPE html>
 <html lang="zxx">
-
-
-<!-- Mirrored from demo.themefisher.com/biztrox-bootstrap/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Tue, 02 Jan 2024 06:14:05 GMT -->
 <head>
   <meta charset="utf-8">
   <title>BIZTROX</title>
-
   
   <!-- mobile responsive meta -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   <%- include('links'); %>
-  
+  <style>
+    #input-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 5px;
+    }
+    
+    .input-box {
+      margin: 5px;
+  }
+</style>
 </head>
 
 <body>
+<%- include('header'); %>
+<section class="d-flex align-items-center justify-content-center" style="height: 20vh;"></section>
+<div  id="input-container"></div>
   
-  <%- include('header'); %>
+<div style="margin: 30vh;"></div>
 
-
-
-  <%- include('scripts'); %>
+<%- include('scripts'); %>
 
 <%- include('footer'); %>
 
-</body>
+<script>
+  document.addEventListener("DOMContentLoaded", function () 
+    {
+      const inputContainer = document.getElementById("input-container");
 
+      // Number of input boxes
+      const numInputBoxes = 6; // Adjust the number as needed
+
+      for (let i = 1; i <= numInputBoxes; i++)
+      {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = ""; // Empty initially
+        input.classList.add('input-box');
+        input.style.textTransform="uppercase";
+        // Add an event listener to each input box
+        input.addEventListener("input", function ()
+        {
+          console.log('here')
+          handleInputChange(input);
+        });
+
+        inputContainer.appendChild(input);
+      }
+
+      // Focus on the first input box
+      inputContainer.firstChild.focus();
+    });
+   
+      function handleInputChange(input) 
+      {
+        const inputValue = input.value.toLowerCase();
+        // If the input is valid, call the API and update the input accordingly
+        if (inputValue === "sairam" && !input.readOnly) 
+        {
+          callApi(input)
+            .then(() =>
+            {
+              focusNextInput(input);
+            })
+            .catch(error => console.error(error));
+        }
+        else 
+        {
+          // Change background color based on validity
+          input.style.backgroundColor = "red";
+        }
+      }
+    
+      function callApi(input) 
+      {
+        // Replace the URL with your actual API endpoint
+        const apiUrl = "http://localhost:8081/api/add/count";
+
+        const data = {
+          uuid:"<%= uuid %>"
+        };
+
+        // Return a Promise to indicate when the API call is complete
+        return fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+          .then(response => response.json())
+          .then(data =>
+          {
+            console.log("API Response:", data);
+
+            // If the API call is successful, make the input read-only
+            if (data && data.status === 1)
+            {
+              input.readOnly = true;
+              input.style.backgroundColor = ""; // Reset background color
+            }
+            else{
+              focusNextInput1(input)
+            }
+          })
+          .catch(error =>
+          {
+            console.error("API Error:", error);
+            throw error;
+          });
+      }
+    
+      function focusNextInput(currentInput) 
+      {
+        const nextInput = currentInput.nextElementSibling;
+
+        // If the next input exists and its API call was successful, move focus to it
+        if (nextInput && !nextInput.readOnly) 
+        {
+          nextInput.focus();
+        }
+      }
+
+      function focusNextInput1(currentInput) 
+      {
+        const nextInput = currentInput.nextElementSibling;
+
+        // If the next input exists and its API call was successful, move focus to it
+        if (nextInput && nextInput.readOnly) 
+        {
+          nextInput.disabled();
+        }
+      }
+</script>
+</body>
 </html>

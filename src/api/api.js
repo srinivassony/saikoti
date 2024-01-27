@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 let app = express();
 const path = require('path');
 const session = require('express-session');
@@ -16,7 +17,7 @@ app.set('views', path.join(__dirname, '../../views'))
 app.set('view engine', 'ejs');
 app.engine('ejs', require('ejs').renderFile);
 app.use(express.static(path.join(__dirname, '../../views')));
-
+app.use(cors());
 app.use(session({
     key:'session',
     secret: 'session_cookie_secret',
@@ -97,23 +98,6 @@ app.get('/error-login',  (req, res) =>
 	});
 });
 
-app.get('/dashboard',  (req, res) =>
-{
-	var name = req.session.name;
-	var id = req.session.id;
-
-	if (!req.session.isLoggedIn)
-	{
-		return res.redirect('/');
-	}
-
-	res.render('pages/dashboard', {
-		isAuthenticated: req.session.isLoggedIn,
-		username: name,
-		id: id
-	});
-});
-
 app.get('/active-account',  (req, res) =>
 {
 	let message = req.flash('error');
@@ -187,24 +171,62 @@ app.get('/change-password',  async(req, res) =>
 	});
 });
 
+app.get('/dashboard',  (req, res) =>
+{
+	var name = req.session.name;
+	var id = req.session.id;
+	var uuid = req.session.uuid;
+
+	if (!req.session.isLoggedIn)
+	{
+		return res.redirect('/');
+	}
+
+	res.render('pages/dashboard', {
+		isAuthenticated: req.session.isLoggedIn,
+		username: name,
+		id: id,
+		uuid: uuid
+	});
+});
+
+app.get('/dashboardInfo',  (req, res) =>
+{
+	var name = req.session.name;
+	var id = req.session.id;
+	var uuid = req.session.uuid;
+
+	if (!req.session.isLoggedIn)
+	{
+		return res.redirect('/');
+	}
+
+	res.render('pages/dashboard', {
+		isAuthenticated: req.session.isLoggedIn,
+		username: name,
+		id: id,
+		uuid: uuid
+	});
+});
+
 app.get('/about-us',  async(req, res) =>
 {
 	res.render('pages/about-us',{
-		isAuthenticated: false
+		isAuthenticated: req.session.isLoggedIn ? true : false
 	});
 });
 
 app.get('/FAQs',  async(req, res) =>
 {
 	res.render('pages/faqs',{
-		isAuthenticated: false
+		isAuthenticated: req.session.isLoggedIn ? true : false
 	});
 });
 
 app.get('/contact-info',  async(req, res) =>
 {
 	res.render('pages/contact',{
-		isAuthenticated: false
+		isAuthenticated: req.session.isLoggedIn ? true : false
 	});
 });
 
@@ -220,7 +242,7 @@ app.post('/api/reset/password', userService.resetPassword);
 
 app.post('/api/change/password', userService.changePassword);
 
-app.post('/logout', function (req, res)
+app.post('/logout', async function (req, res)
 {
 	req.session.destroy(function (err)
 	{
@@ -236,5 +258,13 @@ app.post('/logout', function (req, res)
 		}
 	});
 });
+
+app.post('/api/add/count',async (req, res) =>
+{
+	console.log('req.body',req.body)
+	let result =  res.json(await userService.addCount(req.body));
+
+	return result;
+})
 
 module.exports = app;
