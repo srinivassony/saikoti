@@ -2,7 +2,9 @@ const config = require('../../../config');
 
 const tables = {
     user: 'sk_user',
-    contact: 'sk_contact'
+    contact: 'sk_contact',
+    country: "sk_country",
+    state : "sk_state"
 };
 
 const rdsPrefix = config.rdsSql.owner;

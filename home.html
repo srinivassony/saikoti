@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Country and State</title>
+</head>
+<body>
+
+<label for="country">Country:</label>
+<select id="country" onchange="populateStates()"></select>
+
+<label for="state">State:</label>
+<select id="state"></select>
+
+<script>
+function populateCountryDropdown() {
+  var countryDropdown = document.getElementById("country");
+
+  // Fetch country data dynamically
+  fetch("https://api.example.com/countries")
+  
+    .then(response => response.json())
+    .then(countries => {
+      // Extract country names and sort alphabetically
+      const countryNames = countries.map(country => country.name).sort();
+
+      // Populate the country dropdown
+      countryNames.forEach(country => {
+        addOption(countryDropdown, country);
+      });
+
+      // Trigger the population of states for the default country
+      populateStates();
+    })
+    .catch(error => {
+      console.error('Error fetching country data:', error);
+    });
+}
+
+function populateStates() {
+  var selectedCountry = document.getElementById("country").value;
+  var stateDropdown = document.getElementById("state");
+
+  // Fetch state data dynamically based on the selected country
+  fetch(`https://api.example.com/states?country=${selectedCountry}`)
+    .then(response => response.json())
+    .then(states => {
+      // Extract state names
+      const stateNames = states.map(state => state.name);
+
+      // Populate the state dropdown
+      stateNames.forEach(state => {
+        addOption(stateDropdown, state);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching state data:', error);
+    });
+}
+
+function addOption(selectElement, optionText) {
+  var option = document.createElement("option");
+  option.text = optionText;
+  selectElement.add(option);
+}
+
+// Initial population of country dropdown
+populateCountryDropdown();
+</script>
+
+</body>
+</html>
+

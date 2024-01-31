@@ -40,7 +40,7 @@
     <section class="section">
         <div class="container">
             <div class="row">
-                <div class="col-lg-4 offset-lg-1 col-md-5">
+                <div class="col-lg-3 offset-lg-1 col-md-5">
                     <h2 class="section-title">Contact Us</h2>
                     <ul class="pl-0">
                         <!-- contact items -->
@@ -62,29 +62,31 @@
                             <i class="round-icon mr-3 ti-map-alt"></i>
                             <div class="align-self-center font-primary">
                                 <p>24/B Garden Street.</p>
-                                <p>Northambia, Weals, UK</p>
+                                <p>Northambia, Weals, UK,Northambia, Weals, UKNorthambia, Weals, UKNorthambia, Weals, UKNorthambia, Weals, UKNorthambia, Weals, UKNorthambia, Weals, UK</p>
                             </div>
                         </li>
                     </ul>
                 </div>
                 <!-- form -->
-                <div class="col-lg-6 col-md-7">
+                <div class="col-lg-8 col-md-7">
                     <div class="p-5 rounded box-shadow">
-                        <form action="#" class="row">
-                            <div class="col-12">
+                        <form  action="/api/add/contact" name="contactForm" class="row" method="post" enctype="application/x-www-form-urlencoded" onsubmit="return validateContactForm()" >
+                            <div class="col-6">
                                 <h3>Contact Form</h3>
                             </div>
-                            <div class="col-lg-6">
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Name" required>
+                            <div class="col-6">
+                                <p  style = "color: red;font-weight:bold;border:none;" id="validationError">
+    
+                                </p>
                             </div>
                             <div class="col-lg-6">
-                                <input type="email" class="form-control" name="email" id="email" placeholder="Email Address" required>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="Name" >
+                            </div>
+                            <div class="col-lg-6">
+                                <input type="email" class="form-control" name="email" id="email" placeholder="Email Address" >
                             </div>
                             <div class="col-12">
-                                <input type="text" name="subject" id="subject" class="form-control" placeholder="Subject" required>
-                            </div>
-                            <div class="col-12">
-                                <textarea class="form-control p-2" name="message" id="message" placeholder="Your Message Here..." required style="height: 150px;"></textarea>
+                                <textarea class="form-control p-2" name="message" id="message" placeholder="Your Message Here..."  style="height: 150px;"></textarea>
                             </div>
                             <div class="col-12">
                                 <button class="btn btn-primary" type="submit" value="send">Submit Now</button>
@@ -98,5 +100,26 @@
 
         <%- include('footer'); %>
             <%- include('scripts'); %>
+            <script>
+                function validateContactForm() 
+{
+    var name = document.contactForm.name.value;
+
+    if (!name) 
+    {
+        document.getElementById("validationError").innerHTML = "Name is required.";
+        return false;
+    } 
+    else if(name.length <= 2)
+    {
+        document.getElementById("validationError").innerHTML = "Character limit is greater than two.";
+        return false;
+    }
+    else 
+    {
+        return true;
+    }
+}  
+            </script>
 </body>
 </html>

@@ -7,6 +7,8 @@ const bodyParser = require("body-parser");
 let userService = require('../service/user');
 let userDb = require('../database/db/user');
 let contactService = require('../service/contact');
+let countryService = require('../service/country');
+let stateService = require('../service/state');
 
 //middelwares
 app.use(flash());
@@ -236,5 +238,15 @@ app.post('/logout', function (req, res)
 		}
 	});
 });
+
+app.get ('/api/country/names', async(req,res) =>
+{
+   return res.json(await countryService.countryDetails())
+})
+
+app.get('/api/state/names', async(req, res) =>
+{
+  return res.json(await stateService.stateDetails(req.body))
+})
 
 module.exports = app;

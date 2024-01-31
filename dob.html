@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date of Birth Validation</title>
+</head>
+<body>
+
+<label for="dob">Date of Birth:</label>
+<input type="date" id="dob" onchange="validateDOB()">
+
+<p id="error-message" style="color: red;"></p>
+
+<script>
+function validateDOB() {
+  var dobInput = document.getElementById("dob");
+  var errorMessage = document.getElementById("error-message");
+
+  // Get the selected date from the input
+  var selectedDate = new Date(dobInput.value);
+
+  // Calculate the age
+  var currentDate = new Date();
+  var age = currentDate.getFullYear() - selectedDate.getFullYear();
+
+  // Check if the age is less than 13
+  if (age < 13) {
+    errorMessage.textContent = "Age must be at least 13 years old.";
+    // You can choose to disable form submission or take other actions here
+  } else {
+    errorMessage.textContent = "";
+    // Clear the error message if the age is valid
+  }
+}
+</script>
+
+</body>
+</html>

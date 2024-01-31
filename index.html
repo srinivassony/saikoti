@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Country and State Dropdown</title>
+</head>
+<body>
+  <form id="locationForm">
+    <label for="country">Select Country:</label>
+    <select id="country" name="country" onchange="getStates()">
+    </select>
+
+    <label for="state">Select State:</label>
+    <select id="state" name="state"></select>
+
+    <button type="button" onclick="getLocation()">Get Location</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    function populateCountries() {
+      const countryDropdown = document.getElementById('country');
+
+      // Fetch countries from the Restcountries API
+      fetch('https://restcountries.com/v3.1/all')
+        .then(response => response.json())
+        .then(data => {
+          const countries = data.map(country => country.name.common);
+          countries.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country;
+            option.textContent = country;
+            countryDropdown.appendChild(option);
+          });
+          getStates(); // Populate states based on the initial country
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function getStates() {
+      const selectedCountry = document.getElementById('country').value;
+      const stateDropdown = document.getElementById('state');
+      stateDropdown.innerHTML = '<option value="">Select State</option>';
+
+      // Fetch states from the Restcountries API
+      fetch(`https://restcountries.com/v3.1/name/${selectedCountry}?fields=subdivisions`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('data',data)
+          const states = data[0]?.subdivisions || {};
+          Object.keys(states).forEach(stateCode => {
+            const stateName = states[stateCode].names?.en || stateCode; // Use English name if available, otherwise use state code
+            const option = document.createElement('option');
+            option.value = stateName;
+            option.textContent = stateName;
+            stateDropdown.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function getLocation() {
+      const selectedCountry = document.getElementById('country').value;
+      const selectedState = document.getElementById('state').value;
+      document.getElementById('result').innerText = `Country: ${selectedCountry}, State: ${selectedState}`;
+    }
+
+    // Populate the countries when the page loads
+    document.addEventListener('DOMContentLoaded', populateCountries);
+  </script>
+</body>
+</html>
