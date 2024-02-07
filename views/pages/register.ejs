@@ -38,7 +38,7 @@
                             </div>
                             <div class="col-md-7">
                                 <div class="signup-form">
-                                    <form action="/api/register/user" class="row" method="post" enctype="application/x-www-form-urlencoded" class="row">
+                                    <form action="/api/register/user" class="row" method="post" enctype="application/x-www-form-urlencoded" name="myRegistartionForm" onsubmit="return validateRegistrationForm()">
                                         <div class="col-12">
                                             <h4>Sign Up</h4>
                                         </div>
@@ -51,25 +51,31 @@
                                             </div>
                                         <%}%>
 
+                                        <div class="col-12">
+                                            <p style = "color: red;font-weight:bold;border:none;" id="errors">
+                                               
+                                            </p>
+                                        </div>
+
                                         <div class="col-6">
                                             <input type="text" class="form-control" id="name" name="userName" placeholder="Name">
                                         </div>
                                         <div class="col-6" class="float-sm-right">
-                                            <input type="email" class="form-control" id="email" name="email" placeholder="Email Address">
+                                            <input type="email" class="form-control" id="emailInfo" name="emailInfo" placeholder="Email Address">
                                         </div>
 
                                         <div class="col-6">
-                                            <input type="text" class="form-control" id="name" name="phone" placeholder="phone">
+                                            <input type="text" class="form-control" id="phone" name="phone" placeholder="phone">
                                         </div>
                                         <div class="col-6" class="float-sm-right">
-                                            <input type="date" class="form-control" id="email" name="dob" placeholder="Date of birth">
+                                            <input type="date" class="form-control" id="dob" name="dob" placeholder="Date of birth" onchange="validateDOB()">
                                         </div>
 
                                         <div class="col-6">
-                                            <input type="text" class="form-control" id="name" name="country" placeholder="Country">
+                                            <input type="text" class="form-control" id="country" name="country" placeholder="Country">
                                         </div>
                                         <div class="col-6" class="float-sm-right">
-                                            <input type="text" class="form-control" id="email" name="state" placeholder="State">
+                                            <input type="text" class="form-control" id="state" name="state" placeholder="State">
                                         </div>
 
                                         <div class="col-6">
@@ -102,6 +108,127 @@
     </section>
     <%- include('footer'); %>
     <%- include('scripts'); %>
+
+    <script>
+
+        function validateRegistrationForm() 
+        {
+            let name = document.forms["myRegistartionForm"]["userName"].value;
+            let password = document.forms["myRegistartionForm"]["pass"].value;
+            let email = document.forms["myRegistartionForm"]["emailInfo"].value;
+            let phone = document.forms["myRegistartionForm"]["phone"].value;
+            let country = document.forms["myRegistartionForm"]["country"].value;
+            let state = document.forms["myRegistartionForm"]["state"].value;
+            let dob = document.forms["myRegistartionForm"]["dob"].value;
+            let gender = document.forms["myRegistartionForm"]["gender"].value;
+
+            let phoneValidation = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+            let emailValidation = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+            if (!name) 
+            {
+              document.getElementById('errors').innerHTML="userName is required.";
+              return false;
+            }
+            else  if (name.toString().length < 2 ) 
+            {
+              document.getElementById('errors').innerHTML="User name minimum character limit is 2";
+              return false;
+            }
+            else  if (name.toString().length > 30) 
+            {
+              document.getElementById('errors').innerHTML="userName maximum character limit is 30.";
+              return false;
+            }
+
+            if (!email)
+            {
+                document.getElementById('errors').innerHTML="Email is required.";
+                return false;
+            }
+            else if (email && !(email.match(emailValidation)))
+            {
+                document.getElementById('errors').innerHTML="Invalid email address";
+                return false;
+            }
+            else if (email && email.toString().length > 50)
+            {
+                document.getElementById('errors').innerHTML="Email maximum character limit is 50.";
+                return false;
+            }
+
+            if (!password)
+            {
+                document.getElementById('errors').innerHTML="Password is required.";
+                return false;
+            }
+            else if (password && password.toString().length > 15)
+            {
+                document.getElementById('errors').innerHTML="Password maximum character limit is 15.";
+                return false;
+            }
+            
+            if (!dob)
+            {
+                document.getElementById('errors').innerHTML="Date of birth is required.";
+                return false;
+            }
+
+            if (!country)
+            {
+                document.getElementById('errors').innerHTML="Country is required.";
+                return false;
+            }
+
+            if (!state)
+            {
+                document.getElementById('errors').innerHTML="State is required.";
+                return false;
+            }
+
+            if (!gender)
+            {
+                document.getElementById('errors').innerHTML="Gender is required.";
+                return false;
+            }
+
+            if (!phone)
+            {
+                document.getElementById('errors').innerHTML="Phone is required.";
+                return false;
+            }
+            else if (phone && !(phone.match(phoneValidation)))
+            {
+                document.getElementById('errors').innerHTML="Invalid phone address";
+                return false;
+            }
+
+            return true;
+          }
+          
+    </script>
+
+    <script>
+        function validateDOB() {
+          var dobInput = document.getElementById("dob");
+          var errorMessage = document.getElementById("errors");
+        
+          // Get the selected date from the input
+          var selectedDate = new Date(dobInput.value);
+        
+          // Calculate the age
+          var currentDate = new Date();
+          var age = currentDate.getFullYear() - selectedDate.getFullYear();
+          // Check if the age is less than 13
+          if (age < 13) 
+          {
+            errorMessage.textContent = "Age must be at least 13 years old.";
+          } 
+          else {
+            errorMessage.textContent = "";
+          }
+        }
+        </script>
 </body>
 
 </html>
