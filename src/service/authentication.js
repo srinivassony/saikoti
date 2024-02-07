@@ -58,7 +58,7 @@ function authorize(roles)
         else
         {
 
-            res.redirect('/error-login')
+            res.redirect('/login')
 
             return res.json({
                 status: 0,

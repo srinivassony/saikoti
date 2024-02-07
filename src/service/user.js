@@ -15,7 +15,7 @@ exports.createUser = async (req, res) =>
     try
     {
         let userName = req.body.userName ? req.body.userName : null;
-        let email = req.body.email ? req.body.email.toLowerCase() : null;
+        let email = req.body.emailInfo ? req.body.emailInfo.toLowerCase() : null;
         let phone = req.body.phone ? req.body.phone : null;
         let password = req.body.pass ? req.body.pass : null;
         let dob = req.body.dob ? req.body.dob : null;
@@ -296,33 +296,33 @@ exports.userLogin = async (req, res) =>
 {
     try 
     {
-        let email  = req.body.email ? req.body.email : null;
+        let email  = req.body.emailInfo ? req.body.emailInfo : null;
         let password = req.body.pass ? req.body.pass: null;
 
         if (!email)
         {
             req.flash('error', 'Email is required.');
         
-            res.redirect('/error-login');
+            res.redirect('/login');
         }
         else if (email && !(email.match(emailValidation)))
         {
             req.flash('error', 'Invalid email address');
 
-            res.redirect('/error-login');
+            res.redirect('/login');
         }
         else if (email && email.length > 50)
         {
             req.flash('error', 'Email maximum character limit is 50.');
 
-            res.redirect('/error-login');
+            res.redirect('/login');
         }
 
         if (!password)
         {
             req.flash('error', 'password is required.');
 
-            res.redirect('/error-login');
+            res.redirect('/login');
         }
 
         let user = await db.getUserLoginDetails(email, password);
@@ -331,7 +331,7 @@ exports.userLogin = async (req, res) =>
         {
             req.flash('error', 'Username or password is incorrect.');
 
-            res.redirect('/error-login');
+            res.redirect('/login');
         }
 
         if (user.isRegistered == 0 || user.isInvited == 0 || user.inviteOn == null) 
@@ -339,21 +339,6 @@ exports.userLogin = async (req, res) =>
             req.flash('error', 'User login failed. Try to activate your account');
 
             res.redirect('/active-account');
-        }
-
-        let tokenUser = {
-            id: user.id,
-            name: user.userName,
-            email: user.email,
-            role: user.role,
-            uuid: user.uuid
-        };
-    
-        let token = await Authentication.generateToken(tokenUser);
-    
-        let data = {
-            ...tokenUser,
-            token: token
         }
 
         req.session.isLoggedIn = true;

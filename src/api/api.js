@@ -81,23 +81,6 @@ app.get('/login',  (req, res) =>
 	});
 });
 
-app.get('/error-login',  (req, res) =>
-{
-	let message = req.flash('error');
-	if (message.length > 0)
-	{
-		message = message[0];
-	} else
-	{
-		message = null;
-	}
-
-	res.render('pages/login',{
-		isAuthenticated: false,
-		errorMessage: message
-	});
-});
-
 app.get('/active-account',  (req, res) =>
 {
 	let message = req.flash('error');
