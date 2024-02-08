@@ -96,7 +96,62 @@ let generateResetPassword = (data) =>
         </div>`;
 }
 
+let generateContactUs = (data) =>
+{
+    return `
+        <div style="width: 100% !important; height: 100%;  background: #ffffff;font-size: 16px;">
+            <div style="display: block !important; clear: both !important; margin: 0 auto !important; max-width: 700px !important; font-size: 13px; color: #2F2D46">    
+
+                <div style="padding: 40px;font-family:'Open Sans';font-weight:500;color:#2F2D46;font-size:16px;line-height:24px !important;">
+                   
+                    <div style="margin-top: 10px;">
+                        Dear Support Team,
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        A new message has been submitted via the contact form. Below are the details:
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <ul style="list-style-type: none; padding: 0;">
+                            <li><strong>Name:</strong> ${data.name}</li>
+                            <li><strong>Email:</strong> ${data.email}</li>
+                            <li><strong>Message:</strong> ${data.message}</li>
+                        </ul>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <p>Please take the following actions:</p>
+                        <ol>
+                            <li>Review the user's message carefully to understand their inquiry or concern.</li>
+                            <li>Ensure that the user's query is logged in our system for tracking purposes.</li>
+                            <li>If the message requires a response, draft a timely and informative reply addressing the user's needs or concerns.</li>
+                            <li>If the inquiry is beyond the scope of support, escalate it to the appropriate department or individual within the company.</li>
+                        </ol>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        It's crucial to maintain professionalism and provide excellent customer service. If you have any questions or need assistance, please do not hesitate to reach out to customer.
+                    </div>
+
+                    <hr style="margin-top: 40px; border-top: 1px solid #D5D1D1;">
+                    
+                    <div style="font-size: 12px; color:#6D6C7D;font-weight: 500;line-height:14px !important;text-align: justify;">  
+                
+                    <div style="margin-top: 10px;">
+                        This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. If you have received this email in error, please notify the system manager. Please note that any views or opinions presented in this email are solely those of the author and do not necessarily represent those of the company. Finally, the recipient should check this email and any attachments for the presence of viruses. The company accepts no liability for any damage caused by any virus transmitted by this email.
+                    </div>
+                
+                    <div style="margin-top:10px;">
+                        &copy; ${new Date().getFullYear()} SAIKOTIONLINE. All rights reserved.
+                    </div>
+                </div>
+            </div>
+        </div>`;
+}
+
 module.exports = {
     generateUserInvitation: generateUserInvitation,
-    generateResetPassword: generateResetPassword
+    generateResetPassword: generateResetPassword,
+    generateContactUs: generateContactUs
 }

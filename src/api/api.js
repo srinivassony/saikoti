@@ -208,8 +208,32 @@ app.get('/FAQs',  async(req, res) =>
 
 app.get('/contact-info',  async(req, res) =>
 {
+	let message = req.flash('error');
+
+	if (message.length > 0)
+	{
+		message = message[0];
+	} 
+	else
+	{
+		message = null;
+	}
+
+	let message1 = req.flash('success');
+
+	if (message1.length > 0)
+	{
+		message1 = message1[0];
+	}
+	else
+	{
+		message1 = null;
+	}
+
 	res.render('pages/contact',{
-		isAuthenticated: req.session.isLoggedIn ? true : false
+		isAuthenticated: req.session.isLoggedIn ? true : false,
+		errorMessage: message,
+		sucessMessage: message1
 	});
 });
 
@@ -249,5 +273,7 @@ app.post('/api/add/count',async (req, res) =>
 
 	return result;
 })
+
+app.post('/api/add/contact',contactService.createContact)
 
 module.exports = app;

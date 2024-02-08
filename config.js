@@ -62,7 +62,7 @@ module.exports = {
         sender: process.env.EMAIL_SENDER || environmentConfig.SMTP.SENDER,
         bcc: process.env.EMAIL_BCC || environmentConfig.SMTP.BCC
     },
-
+    email : process.env.CONTACT_EMAIL || environmentConfig.CONTACT_EMAIL || 'srinivas.sony777@gmail.com'
 }
 
 
