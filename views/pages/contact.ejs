@@ -35,7 +35,16 @@
             </div>
         </div>
     </section>
-    
+ <% if(sucessMessage){ %>       
+    <section class="section" id="final_msg">
+        <div class="container">
+            <div class="alert alert-primary" role="alert">
+                <%= sucessMessage %>
+            </div>
+        </div>
+    </section>
+    <%} %>
+
     <!-- contact -->
     <section class="section">
         <div class="container">
@@ -67,13 +76,21 @@
                         </li>
                     </ul>
                 </div>
+               
                 <!-- form -->
                 <div class="col-lg-6 col-md-7">
                     <div class="p-5 rounded box-shadow">
-                        <form action="#" class="row" name="myContactForm" onsubmit="return validateContactForm()">
+                        <form action="/api/add/contact" class="row" method="post" enctype="application/x-www-form-urlencoded" name="myContactForm" onsubmit="return validateContactForm()">
                             <div class="col-12">
                                 <h3>Contact Form</h3>
                             </div>
+                            <% if (errorMessage) { %>
+                                <div class="col-12">
+                                    <p class="form-control" style = "color: red;font-weight:bold;border:none;">
+                                        <%= errorMessage %>
+                                    </p>
+                                </div>
+                                <% } %>
                             <div class="col-12">
                                 <p style = "color: red;font-weight:bold;border:none;" id="errors">
                                    
@@ -206,6 +223,10 @@
                 
                     
               });
+        </script>
+
+        <script>
+            setTimeout(function(){$('#final_msg').fadeOut();}, 10000);
         </script>
     
 </body>

@@ -2,10 +2,8 @@ const db = require('../database/db/user');
 const countDB = require('../database/db/count');
 const common = require('../utills/utils');
 const Status = common.Status;
-const Authentication = require('../service/authentication');
 const htmlTemplate = require('../utills/htmlTemplate');
 const smtp = require('../service/smtp');
-const { render } = require('../api/api');
 let phoneValidation = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
 let emailValidation = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
