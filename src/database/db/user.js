@@ -10,7 +10,7 @@ let createUser = async(data) =>
     return await User.query().insert(data);
 }
 
-let getUserDetails = async (id) =>
+let getUserDetails = async () =>
 {
   return await User.query().select();
 }
