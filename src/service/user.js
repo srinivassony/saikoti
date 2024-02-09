@@ -190,7 +190,6 @@ exports.createUser = async (req, res) =>
     }
     catch (error) 
     {
-        console.log(error)
         req.flash('error', error.message);
 
         res.redirect('/register');
@@ -482,7 +481,6 @@ exports.addCount = async (reqParams) =>
     try
     {
         let uuid = reqParams.uuid ? reqParams.uuid : null;
-        console.log('uuid',uuid)
 
         if (!uuid)
         {
@@ -492,7 +490,6 @@ exports.addCount = async (reqParams) =>
         }
 
         let getCount = await countDB.getCounts(uuid);
-        console.log('getCount',getCount)
 
         let id = getCount && getCount.id ? getCount.id : null;
 
@@ -507,7 +504,7 @@ exports.addCount = async (reqParams) =>
             }
 
             let addCountInfo = await countDB.addCount(params);
-console.log('addCountInfo',addCountInfo)
+            
             return {
                 status : Status.SUCCESS,
                 data : {
