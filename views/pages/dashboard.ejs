@@ -51,7 +51,6 @@
         // Add an event listener to each input box
         input.addEventListener("input", function ()
         {
-          console.log('here')
           handleInputChange(input);
         });
 
@@ -102,8 +101,6 @@
           .then(response => response.json())
           .then(data =>
           {
-            console.log("API Response:", data);
-
             // If the API call is successful, make the input read-only
             if (data && data.status === 1)
             {
@@ -116,7 +113,6 @@
           })
           .catch(error =>
           {
-            console.error("API Error:", error);
             throw error;
           });
       }

@@ -72,10 +72,15 @@
                                         </div>
 
                                         <div class="col-6">
-                                            <input type="text" class="form-control" id="country" name="country" placeholder="Country">
+                                            <select class="form-control" aria-label="Default select example" id="country" name="country" onchange="populateStates()">
+                                                <option selected>Select the country</option>
+                                            </select>
                                         </div>
+                                        
                                         <div class="col-6" class="float-sm-right">
-                                            <input type="text" class="form-control" id="state" name="state" placeholder="State">
+                                            <select class="form-control" aria-label="Default select example" id="state" name="state">
+                                                <option selected>Select the state</option>
+                                            </select>
                                         </div>
 
                                         <div class="col-6">
@@ -228,7 +233,78 @@
             errorMessage.textContent = "";
           }
         }
-        </script>
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var countryDropdown = document.getElementById("country");
+            var stateDropdown = document.getElementById("state");
+            var errorMessage = document.getElementById("errors"); // Assuming you have an element to display the error message
+            var selectedCountryId;
+            var countries = [];
+            // Fetch countries when the page loads
+            fetch("/api/countries")
+                .then(response => response.json())
+                .then(data => 
+                {        
+                    if(data && data.status == 0)
+                    {
+                        errorMessage.textContent = data.message
+                    }
+                    else
+                    {
+                        countries = data; 
+                        countries.forEach(country => {
+                            var option = document.createElement("option");
+                            option.value = country.countryName;
+                            option.text = country.countryName;
+                            countryDropdown.appendChild(option);
+                        });
+                    }
+                })
+                .catch(error => errorMessage.textContent = error.message);
+        
+            // Fetch states when a country is selected
+            countryDropdown.addEventListener("change", function() {
+                var countryCode = this.value;
+                var selectedCountry = countries.find(country => country.countryName === countryCode);
+                if (selectedCountry) 
+                {
+                    selectedCountryId = selectedCountry.id;
+                    // Clear the state dropdown before fetching and populating new states
+                    stateDropdown.innerHTML = "<option value=''>Select a state</option>"; // Clear existing options
+                    
+                    fetch("/api/states", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ countryId: selectedCountryId })
+                    })
+                    .then(response => response.json())
+                    .then(states => {
+                        if(states && states.status == 0)
+                        {
+                            errorMessage.textContent = states.message;
+                        }
+                        else
+                        {
+                            states.forEach(state => {
+                                var option = document.createElement("option");
+                                option.value = state.stateName;
+                                option.text = state.stateName;
+                                stateDropdown.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(error =>  errorMessage.textContent = error.message);
+                }
+            });
+        });
+        
+      
+      </script>
+
 </body>
 
 </html>

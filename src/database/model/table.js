@@ -4,6 +4,8 @@ const tables = {
     user: 'sk_user',
     contact: 'sk_contact',
     count:'sk_count',
+    country:'sk_country',
+    state:'sk_state',
 };
 
 const rdsPrefix = config.rdsSql.owner;
