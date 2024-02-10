@@ -290,5 +290,9 @@ app.post('/api/states', async (req, res) =>
 	return result;
 });
 
+app.get('/api/delete/country', async(req, res) =>
+{
+   return res.json(await countryService.deleteCountry())
+})
 
 module.exports = app;

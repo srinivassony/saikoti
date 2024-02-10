@@ -64,3 +64,21 @@ exports.getStatesByCountryId = async (reqParams) =>
         }
     }
 }
+
+exports.deleteCountry = async( ) =>
+{
+  try
+ {
+   let deleteCountries = db.deleteCountries();
+
+   return deleteCountries;
+
+}
+catch(error)
+{
+    return {
+        status: Status.FAIL,
+        message: error.message
+    }
+}
+}
