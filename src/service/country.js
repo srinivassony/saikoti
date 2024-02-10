@@ -4,6 +4,7 @@ const Status = common.Status;
 const htmlTemplate = require('../utills/htmlTemplate');
 const smtp = require('../service/smtp');
 const config = require('../../config');
+const country = require('../database/db/country');
 
 exports.getCountries = async () =>
 {
@@ -69,9 +70,13 @@ exports.deleteCountry = async( ) =>
 {
   try
  {
-   let deleteCountries = db.deleteCountries();
+   let deleteCountries = await db.getDeleteCountries();
 
-   return deleteCountries;
+   let deletedIds = deleteCountries.filter(country => country && country.id).map(country => country && country.id);
+
+   let deletedCountries = await db.deletedCountries(deletedIds);
+
+   return deletedCountries;
 
 }
 catch(error)
