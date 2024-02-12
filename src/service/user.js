@@ -26,18 +26,24 @@ exports.createUser = async (req, res) =>
             req.flash('error', 'Email is required.');
         
             res.redirect('/register');
+
+            return "";
         }
         else if (email && !(email.match(emailValidation)))
         {
             req.flash('error', 'Invalid email address');
 
             res.redirect('/register');
+
+            return "";
         }
         else if (email && email.toString().length > 50)
         {
             req.flash('error', 'Email maximum character limit is 50.');
 
             res.redirect('/register');
+
+            return "";
         }
 
         if (!password)
@@ -45,12 +51,16 @@ exports.createUser = async (req, res) =>
             req.flash('error', 'Password is required.');
         
             res.redirect('/register');
+
+            return "";
         }
         else if (password && password.toString().length > 15)
         {
             req.flash('error', 'Password maximum character limit is 15.');
 
             res.redirect('/register');
+
+            return "";
         }
 
         if (!dob)
@@ -58,6 +68,8 @@ exports.createUser = async (req, res) =>
             req.flash('error', 'Password is required.');
         
             res.redirect('/register');
+
+            return "";
         }
 
         if (!country)
@@ -65,12 +77,16 @@ exports.createUser = async (req, res) =>
             req.flash('error', 'country is required.');
         
             res.redirect('/register');
+
+            return "";
         }
         else if (country && country.toString().length > 30)
         {
             req.flash('error', 'country maximum character limit is 30.');
 
             res.redirect('/register');
+
+            return "";
         }
 
         if (!state)
@@ -78,12 +94,16 @@ exports.createUser = async (req, res) =>
             req.flash('error', 'state is required.');
         
             res.redirect('/register');
+
+            return "";
         }
         else if (state && state.toString().length > 30)
         {
             req.flash('error', 'state maximum character limit is 30.');
 
             res.redirect('/register');
+
+            return "";
         }
 
         if (!gender)
@@ -91,6 +111,8 @@ exports.createUser = async (req, res) =>
             req.flash('error', 'gender is required.');
         
             res.redirect('/register');
+
+            return "";
         }
 
         if (!phone)
@@ -98,12 +120,16 @@ exports.createUser = async (req, res) =>
             req.flash('error', 'phone is required.');
         
             res.redirect('/register');
+
+            return "";
         }
         else if (phone && !(phone.match(phoneValidation)))
         {
             req.flash('error', 'Invalid phone number');
 
             res.redirect('/register');
+
+            return "";
         }
 
         if (!userName)
@@ -111,16 +137,24 @@ exports.createUser = async (req, res) =>
             req.flash('error', 'userName is required.');
         
             res.redirect('/register');
+
+            return "";
         }
         if(userName.toString().length < 2 )
         {
-            throw new Error( 'User name minimum character limit is 2')   
+            req.flash('error', 'userName minimum character limit is 2.');
+
+            res.redirect('/register');
+
+            return "";
         }
         else if (userName && userName.toString().length > 30)
         {
             req.flash('error', 'userName maximum character limit is 30.');
 
             res.redirect('/register');
+
+            return "";
         }
 
         let existingUserDetails = await db.getExsitingUserDetails(email, phone);
@@ -132,12 +166,16 @@ exports.createUser = async (req, res) =>
                 req.flash('error', 'User email already exists. Try with different email.');
 
                 res.redirect('/register');
+
+                return "";
             }
             else if (existingUserDetails.phone == phone) 
             {
                 req.flash('error', 'Phone number already exists.');
 
                 res.redirect('/register');
+
+                return "";
             }
         }
 
@@ -184,6 +222,8 @@ exports.createUser = async (req, res) =>
             req.flash('error', error.message);
 
             res.redirect('/register');
+
+            return "";
         }
 
         res.redirect('/active-account');
@@ -193,6 +233,8 @@ exports.createUser = async (req, res) =>
         req.flash('error', error.message);
 
         res.redirect('/register');
+
+        return "";
     }
 }
 
@@ -207,6 +249,8 @@ exports.InviteUser = async (req, res) =>
             req.flash('error', 'User id is requried.');
 
             res.redirect('/active-account');
+
+            return "";
         }
 
         let userDetails = await db.getUserDetailsById(userId);
@@ -216,6 +260,8 @@ exports.InviteUser = async (req, res) =>
             req.flash('error', 'User not found.');
 
             res.redirect('/active-account');
+
+            return "";
         }
 
         let params = {
@@ -235,6 +281,8 @@ exports.InviteUser = async (req, res) =>
         req.flash('error', error.message);
 
         res.redirect('/login');
+
+        return "";
     }
 }
 
@@ -249,6 +297,8 @@ exports.reSendInviteUser = async (req, res) =>
             req.flash('error', 'Email is required.');
 
             res.redirect('/active-account');
+
+            return "";
         }
 
         let userDetails = await db.getUserByEmailId(email);
@@ -258,6 +308,8 @@ exports.reSendInviteUser = async (req, res) =>
             req.flash('error', 'There is no user with such email.');
 
             res.redirect('/active-account');
+
+            return "";
         }
 
         var htmlData = {
@@ -279,6 +331,8 @@ exports.reSendInviteUser = async (req, res) =>
         req.flash('success', 'Invitation email is sent to your email address');
 
         res.redirect('/active-account');
+
+        return "";
     }
     catch (error)
     {
@@ -301,18 +355,24 @@ exports.userLogin = async (req, res) =>
             req.flash('error', 'Email is required.');
         
             res.redirect('/login');
+
+            return "";
         }
         else if (email && !(email.match(emailValidation)))
         {
             req.flash('error', 'Invalid email address');
 
             res.redirect('/login');
+
+            return "";
         }
         else if (email && email.length > 50)
         {
             req.flash('error', 'Email maximum character limit is 50.');
 
             res.redirect('/login');
+
+            return "";
         }
 
         if (!password)
@@ -320,6 +380,8 @@ exports.userLogin = async (req, res) =>
             req.flash('error', 'password is required.');
 
             res.redirect('/login');
+
+            return "";
         }
 
         let user = await db.getUserLoginDetails(email, password);
@@ -329,6 +391,8 @@ exports.userLogin = async (req, res) =>
             req.flash('error', 'Username or password is incorrect.');
 
             res.redirect('/login');
+
+            return "";
         }
 
         if (user.isRegistered == 0 || user.isInvited == 0 || user.inviteOn == null) 
@@ -336,6 +400,8 @@ exports.userLogin = async (req, res) =>
             req.flash('error', 'User login failed. Try to activate your account');
 
             res.redirect('/active-account');
+
+            return "";
         }
 
         req.session.isLoggedIn = true;
@@ -367,6 +433,8 @@ exports.resetPassword = async (req, res) =>
             req.flash('error', 'Email is requried.');
 
             res.redirect('/reset-password');
+
+            return "";
         }
 
         let user = await db.getUserByEmailId(email);
@@ -376,6 +444,8 @@ exports.resetPassword = async (req, res) =>
             req.flash('error', 'There is no user with such email.');
 
             res.redirect('/reset-password');
+
+            return "";
         }
 
         try
@@ -403,17 +473,23 @@ exports.resetPassword = async (req, res) =>
             req.flash('error', error.message);
 
             res.redirect('/reset-password');
+
+            return "";
         }
 
         req.flash('success', 'Reset password email is sent to your email address');
 
         res.redirect('/reset-password');
+
+        return "";
     } 
     catch (error) 
     {
         req.flash('error', error.message);
 
         res.redirect('/reset-password');
+
+        return "";
     }
 }
 
@@ -430,6 +506,8 @@ exports.changePassword = async (req, res) =>
             req.flash('error', 'Email is requried.');
 
             res.redirect('/change-password');
+
+            return "";
         }
 
         if (!password)
@@ -437,6 +515,8 @@ exports.changePassword = async (req, res) =>
             req.flash('error', 'Password is requried.');
 
             res.redirect('/change-password');
+
+            return "";
         }
 
         let user = await db.getUserByEmailId(email);
@@ -446,6 +526,8 @@ exports.changePassword = async (req, res) =>
             req.flash('error', 'There is no user with such email.');
 
             res.redirect('/change-password');
+
+            return "";
         }
 
         if (user.isRegistered == 0 || user.isInvited == 0 || user.inviteOn == null) 
@@ -453,6 +535,8 @@ exports.changePassword = async (req, res) =>
             req.flash('error', 'User login failed. Try to activate your account');
 
             res.redirect('/change-password');
+
+            return "";
         }
 
         let params = {
@@ -466,12 +550,16 @@ exports.changePassword = async (req, res) =>
         req.flash('success', 'Password was changed successfuly.');
 
         res.redirect('/login');
+
+        return "";
     } 
     catch (error) 
     {
         req.flash('error', error.message);
 
         res.redirect('/change/password');
+
+        return "";
     }
 }
 
@@ -487,6 +575,8 @@ exports.addCount = async (reqParams) =>
             req.flash('error', 'params are required.');
 
             res.redirect('/dashboardInfo');
+
+            return "";
         }
 
         let getCount = await countDB.getCounts(uuid);
