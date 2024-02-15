@@ -410,7 +410,7 @@ exports.userLogin = async (req, res) =>
         req.session.name = user.userName;
         req.session.id = user.id;
         req.session.uuid =  user.uuid;
-        req.session.count = countDetails.noOfCount;
+        req.session.count = countDetails && countDetails.noOfCount ? countDetails.noOfCount : 0;
         req.session.save();
 
         res.redirect('/dashboard');
