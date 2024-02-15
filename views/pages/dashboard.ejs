@@ -132,22 +132,25 @@
           targetCount.textContent = remainingCount > 0 ? remainingCount : 'You have reached the target!';
       }
       
-      // Function to auto-correct input to 'sairam' if it's not 'sairam'
-  
+      // Function to prevent paste action
+      function preventPaste(event) {
+        event.preventDefault();
+      }
 
       // Number of input boxes
-      const numInputBoxes = 109; // Adjust the number as needed
+      const numInputBoxes = 108; // Adjust the number as needed
 
       for (let i = 1; i <= numInputBoxes; i++)
       {
         const input = document.createElement("input");
         input.type = "text";
         input.value = ""; // Empty initially
+        input.maxLength = 6; // Set max length to 6 characters
         input.id = 'inputbox' + i;
         input.classList.add('input-box');
         input.style.textTransform="uppercase";
         input.addEventListener('input', updateCount);
-       // input.addEventListener('blur', () => autoCorrect(input)); 
+        input.addEventListener('paste', preventPaste);
         // Add an event listener to each input box
         input.addEventListener("input", function ()
         {
