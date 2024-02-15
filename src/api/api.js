@@ -160,6 +160,7 @@ app.get('/dashboard',  (req, res) =>
 	var name = req.session.name;
 	var id = req.session.id;
 	var uuid = req.session.uuid;
+	var countInfo = req.session.count;
 
 	if (!req.session.isLoggedIn)
 	{
@@ -170,7 +171,8 @@ app.get('/dashboard',  (req, res) =>
 		isAuthenticated: req.session.isLoggedIn,
 		username: name,
 		id: id,
-		uuid: uuid
+		uuid: uuid,
+		countInfo: countInfo
 	});
 });
 
@@ -179,6 +181,7 @@ app.get('/dashboardInfo',  (req, res) =>
 	var name = req.session.name;
 	var id = req.session.id;
 	var uuid = req.session.uuid;
+	var countInfo = req.session.count;
 
 	if (!req.session.isLoggedIn)
 	{
@@ -189,7 +192,8 @@ app.get('/dashboardInfo',  (req, res) =>
 		isAuthenticated: req.session.isLoggedIn,
 		username: name,
 		id: id,
-		uuid: uuid
+		uuid: uuid,
+		countInfo: countInfo
 	});
 });
 
@@ -290,5 +294,17 @@ app.post('/api/states', async (req, res) =>
 	return result;
 });
 
+app.get('/api/delete/country', async(req, res) =>
+{
+   return res.json(await countryService.deleteCountry())
+})
+
+app.post('/api/fetchCount',async (req, res) =>
+{
+	console.log(req)
+	let result =  res.json(await userService.getCount(req.body));
+
+	return result;
+})
 
 module.exports = app;
