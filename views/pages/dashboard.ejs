@@ -133,12 +133,7 @@
       }
       
       // Function to auto-correct input to 'sairam' if it's not 'sairam'
-    function autoCorrect(input) {
-      if (input.value.trim().toLowerCase() !== 'sairam') {
-          input.value = 'sairam'; // Correct the input value
-          updateCount(); // Update the count
-      }
-  }
+  
 
       // Number of input boxes
       const numInputBoxes = 109; // Adjust the number as needed
@@ -152,7 +147,7 @@
         input.classList.add('input-box');
         input.style.textTransform="uppercase";
         input.addEventListener('input', updateCount);
-        input.addEventListener('blur', () => autoCorrect(input)); 
+       // input.addEventListener('blur', () => autoCorrect(input)); 
         // Add an event listener to each input box
         input.addEventListener("input", function ()
         {
