@@ -338,10 +338,13 @@ exports.userLogin = async (req, res) =>
             res.redirect('/active-account');
         }
 
+        let countDetails = await countDB.getCounts(user.uuid);
+
         req.session.isLoggedIn = true;
-        req.session.name = user.username;
+        req.session.name = user.userName;
         req.session.id = user.id;
         req.session.uuid =  user.uuid;
+        req.session.count = countDetails.noOfCount;
         req.session.save();
 
         res.redirect('/dashboard');
@@ -539,6 +542,36 @@ exports.addCount = async (reqParams) =>
     catch (error) 
     {
         console.log(error)
+        return {
+            status: Status.FAIL,
+            message: error.message
+        }
+    }
+}
+
+exports.getCount = async (reqParams) =>
+{
+    try
+    {
+        let uuid = reqParams.uuid ? reqParams.uuid : null;
+
+        if (!uuid)
+        {
+            req.flash('error', 'params are required.');
+
+            res.redirect('/dashboardInfo');
+        }
+
+        let getCount = await countDB.getCounts(uuid);
+
+        return {
+            status: Status.SUCCESS,
+            count: getCount
+        }
+
+    }
+    catch (error) 
+    {
         return {
             status: Status.FAIL,
             message: error.message
