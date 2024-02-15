@@ -65,7 +65,7 @@
                                         </div>
 
                                         <div class="col-6">
-                                            <input type="text" class="form-control" id="phone" name="phone" placeholder="phone">
+                                            <input type="text" class="form-control" id="phone" name="phone" placeholder="phone" maxlength="10">
                                         </div>
                                         <div class="col-6" class="float-sm-right">
                                             <input type="date" class="form-control" id="dob" name="dob" placeholder="Date of birth" onchange="validateDOB()">
@@ -113,6 +113,21 @@
     </section>
     <%- include('footer'); %>
     <%- include('scripts'); %>
+
+    <script>
+        const phoneInput = document.getElementById('phone');
+        
+        phoneInput.addEventListener('input', function() {
+            // Remove any non-digit characters
+            let phoneNumber = phoneInput.value.replace(/\D/g, '');
+            
+            // Limit to 10 digits
+            phoneNumber = phoneNumber.slice(0, 10);
+            
+            // Update the input value
+            phoneInput.value = phoneNumber;
+        });
+    </script>
 
     <script>
 

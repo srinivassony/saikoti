@@ -11,45 +11,99 @@
   <%- include('links'); %>
   <style>
     /* CSS for input boxes */
+    .wrap {
+      width: 100%;
+      margin: 0 auto; /* Center the container horizontally */
+      padding: 20px;
+      box-sizing: border-box;
+      border: 1px solid #b4a9a9;
+      border-radius: 5px;
+      background-color: #ff9797; /* Add background color to the container */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add box shadow to the container */
+  }
+  
     .input-box {
-        width: 100%; /* Adjust the width as needed */
-        padding: 10px;
+        width: calc(10% - 20px); /* Adjust the width as needed */
+        max-width: 300px; /* Maximum width for larger screens */
+        padding: 3px;
         margin-bottom: 10px;
+        margin-right: 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 16px;
         box-sizing: border-box;
+        transition: border-color 1s ease; 
     }
     
     /* Style for read-only input boxes */
     .input-box[readonly] {
-        background-color: #f2f2f2; /* Change to desired background color */
+        background-color: #ffffff; /* Change to desired background color */
     }
+    .input-box:focus {
+      border-color: dodgerblue; /* Change border color when input box is focused */
+  }
+  #countParagraph{
+    font-size: 20px;
+    color: black;
+  }
+  /* Media queries for responsiveness */
+@media screen and (max-width: 1200px) {
+  .input-box {
+      width: calc(15% - 20px); /* Adjust width for medium-sized screens */
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .input-box {
+      width: calc(20% - 20px); /* Adjust width for smaller screens */
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .input-box {
+      width: calc(25% - 20px); /* Adjust width for even smaller screens */
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .input-box {
+      width: calc(50% - 20px); /* Adjust width for very small screens */
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .input-box {
+      width: calc(100% - 20px); /* Full width for mobile devices */
+  }
+}
     </style>
 </head>
 
 <body>
 <%- include('header'); %>
 <section class="section">
-  <div class="container">
+  <div class="container wrap">
       <div class="row">
-          <div class="col-lg-7 order-2 order-lg-1">
-              <h5 class="section-title-sm">Dear <%= username %></h5>
+          <div class="col-lg-12 order-2 order-lg-1">
+              <h5 class="section-title-sm" style="color: black;">Dear <%= username %></h5>
               <h2 class="section-title section-title-border-half">Welcome to Saikoti.com</h2>
-              <p>Please write "Sairam" as many times as you wish.You have written <b><% if (countInfo > 0) { %> <%= countInfo %> <% } else { %> 0 <%} %></b> times till now. You have to write <b> <% if (countInfo > 0) { %> <%= 10000000-countInfo %> <% } else { %> 10000000 <%} %></b> to reach the target of One Crore.</p>
+              <p id="countParagraph">Please write "Sairam" as many times as you wish.You have written <b><span id="countDisplay">0</span></b> times till now. You have to write <b><span id="targetCount">10000000</span></b> to reach the target of One Crore.</p>
           </div>
           <!-- philosophy image -->
-          <div class="col-lg-5 align-self-center order-1 order-lg-2 mb-md-50">
+          <!-- <div class="col-lg-5 align-self-center order-1 order-lg-2 mb-md-50">
               <img class="img-fluid w-100" src="images/about/philosophy.jpg" alt="philosophy-image">
+          </div> -->
+          
           </div>
+          <div  id="input-container"></div>
       </div>
   </div>
 </section>
-<section class="section">
-  <div class="container">
+<!-- <section class="section">
+  <div class="container wrap">
 <div  id="input-container"></div>
   </div>
-  </section>
+  </section> -->
 <div style="margin: 30vh;"></div>
 
 <%- include('scripts'); %>
@@ -60,9 +114,34 @@
   document.addEventListener("DOMContentLoaded", function () 
     {
       const inputContainer = document.getElementById("input-container");
+      const countDisplay = document.getElementById('countDisplay');
+      const targetCount = document.getElementById('targetCount');
+      let countInfo = 0;
+  
+      // Function to update count
+      function updateCount() {
+          const inputBoxes = document.querySelectorAll('.input-box');
+        let count = countInfo ? countInfo : 0;
+        inputBoxes.forEach(input => {
+              if (input.value.trim().toLowerCase() === 'sairam') {
+                  count++;
+              }
+          });
+          countDisplay.textContent = count;
+          const remainingCount = 10000000 - count;
+          targetCount.textContent = remainingCount > 0 ? remainingCount : 'You have reached the target!';
+      }
+      
+      // Function to auto-correct input to 'sairam' if it's not 'sairam'
+    function autoCorrect(input) {
+      if (input.value.trim().toLowerCase() !== 'sairam') {
+          input.value = 'sairam'; // Correct the input value
+          updateCount(); // Update the count
+      }
+  }
 
       // Number of input boxes
-      const numInputBoxes = 20; // Adjust the number as needed
+      const numInputBoxes = 109; // Adjust the number as needed
 
       for (let i = 1; i <= numInputBoxes; i++)
       {
@@ -72,6 +151,8 @@
         input.id = 'inputbox' + i;
         input.classList.add('input-box');
         input.style.textTransform="uppercase";
+        input.addEventListener('input', updateCount);
+        input.addEventListener('blur', () => autoCorrect(input)); 
         // Add an event listener to each input box
         input.addEventListener("input", function ()
         {
@@ -177,7 +258,6 @@
     const params = {
          uuid:"<%= uuid %>"
       };
-      console.log('params',params)
         // Fetch the count from the server using Fetch API
         fetch('/api/fetchCount', {
             method: 'POST',
@@ -196,9 +276,11 @@
             return response.json();
           })
     .then(data => {
-        console.log('data',data)
         const countFromDB = data.count.noOfCount; // Assuming the response contains the count
-        console.log('countFromDB',countFromDB)
+        document.getElementById('countDisplay').textContent = countFromDB;
+        const remainingCount = 10000000 - countFromDB;
+        document.getElementById('targetCount').textContent = remainingCount > 0 ? remainingCount : 'You have reached the target!';
+        countInfo = countFromDB;
         for (let i = 1; i <= countFromDB; i++) {
             const input = document.getElementById('inputbox' + i);
             if (input) {
