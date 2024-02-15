@@ -10,23 +10,46 @@
   
   <%- include('links'); %>
   <style>
-    #input-container {
-        display: flex;
-        flex-wrap: wrap;
-        margin: 5px;
+    /* CSS for input boxes */
+    .input-box {
+        width: 100%; /* Adjust the width as needed */
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
     }
     
-    .input-box {
-      margin: 5px;
-  }
-</style>
+    /* Style for read-only input boxes */
+    .input-box[readonly] {
+        background-color: #f2f2f2; /* Change to desired background color */
+    }
+    </style>
 </head>
 
 <body>
 <%- include('header'); %>
-<section class="d-flex align-items-center justify-content-center" style="height: 20vh;"></section>
+<section class="section">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-7 order-2 order-lg-1">
+              <h5 class="section-title-sm">Dear <%= username %></h5>
+              <h2 class="section-title section-title-border-half">Welcome to Saikoti.com</h2>
+              <p>Please write "Sairam" as many times as you wish.You have written <b><% if (countInfo > 0) { %> <%= countInfo %> <% } else { %> 0 <%} %></b> times till now. You have to write <b> <% if (countInfo > 0) { %> <%= 10000000-countInfo %> <% } else { %> 10000000 <%} %></b> to reach the target of One Crore.</p>
+          </div>
+          <!-- philosophy image -->
+          <div class="col-lg-5 align-self-center order-1 order-lg-2 mb-md-50">
+              <img class="img-fluid w-100" src="images/about/philosophy.jpg" alt="philosophy-image">
+          </div>
+      </div>
+  </div>
+</section>
+<section class="section">
+  <div class="container">
 <div  id="input-container"></div>
-  
+  </div>
+  </section>
 <div style="margin: 30vh;"></div>
 
 <%- include('scripts'); %>
@@ -39,13 +62,14 @@
       const inputContainer = document.getElementById("input-container");
 
       // Number of input boxes
-      const numInputBoxes = 6; // Adjust the number as needed
+      const numInputBoxes = 20; // Adjust the number as needed
 
       for (let i = 1; i <= numInputBoxes; i++)
       {
         const input = document.createElement("input");
         input.type = "text";
         input.value = ""; // Empty initially
+        input.id = 'inputbox' + i;
         input.classList.add('input-box');
         input.style.textTransform="uppercase";
         // Add an event listener to each input box
@@ -60,6 +84,26 @@
       // Focus on the first input box
       inputContainer.firstChild.focus();
     });
+
+    function handleInputChange1(input) 
+      {
+        const inputValue = input.value.toLowerCase();
+        // If the input is valid, call the API and update the input accordingly
+        if (inputValue === "sairam" && !input.readOnly) 
+        {
+          callApi(input)
+            .then(() =>
+            {
+              focusNextInput(input);
+            })
+            .catch(error => console.error(error));
+        }
+        else 
+        {
+          // Change background color based on validity
+          input.style.backgroundColor = "red";
+        }
+      }
    
       function handleInputChange(input) 
       {
@@ -128,16 +172,46 @@
         }
       }
 
-      function focusNextInput1(currentInput) 
-      {
-        const nextInput = currentInput.nextElementSibling;
+  window.onload = function() {
+    // Fetch the count from the server using Fetch API
+    const params = {
+         uuid:"<%= uuid %>"
+      };
+      console.log('params',params)
+        // Fetch the count from the server using Fetch API
+        fetch('/api/fetchCount', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(params)
+          })
+          .then(response => 
+          {
+            if (!response.ok) 
+            {
+              throw new Error('Network response was not ok');
+            }
 
-        // If the next input exists and its API call was successful, move focus to it
-        if (nextInput && nextInput.readOnly) 
-        {
-          nextInput.disabled();
+            return response.json();
+          })
+    .then(data => {
+        console.log('data',data)
+        const countFromDB = data.count.noOfCount; // Assuming the response contains the count
+        console.log('countFromDB',countFromDB)
+        for (let i = 1; i <= countFromDB; i++) {
+            const input = document.getElementById('inputbox' + i);
+            if (input) {
+                input.value = 'SAIRAM';
+                input.readOnly = true; // Set value to "sairam" for the corresponding input box
+            }
         }
-      }
+       
+    })
+    .catch(error => console.error('Error fetching count:', error));
+};
+
 </script>
+
 </body>
 </html>
