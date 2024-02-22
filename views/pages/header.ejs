@@ -20,12 +20,15 @@
                             </li>
                             <% } else { %>
                                 <li class="list-inline-item">
-                                    <a href="mailto:info@companyname.com">info@companyname.com</a>
+                                    <a class="nav-link" href="/about-us">About us</a>
                                 </li>
+        
                                 <li class="list-inline-item">
-                                    <a href="callto:1234565523">Call Us Now:
-                                        <span class="ml-2"> 123 456 5523</span>
-                                    </a>
+                                    <a class="nav-link" href="/FAQs">FAQs</a>
+                                </li>
+        
+                                <li class="list-inline-item">
+                                    <a class="nav-link" href="/contact-info">contact</a>
                                 </li>
                                 <% }%>
                     </ul>
@@ -39,11 +42,11 @@
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <% if (!isAuthenticated) { %>
                     <a class="navbar-brand" href="/">
-                        <img src="images/logo.png" alt="logo">
+                        <img src="images/logo.png" alt="logo" >
                     </a>
                     <% } else { %>
                         <a class="navbar-brand" href="/dashboard">
-                            <img src="images/logo.png" alt="logo">
+                            <img src="images/logo.png" alt="logo"  >
                         </a>
                     <% } %>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -75,15 +78,15 @@
                                 </li>
         
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/about-us">About us</a>
+                                    <a class="nav-link" href="/myAccount">My Account</a>
                                 </li>
         
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/FAQs">FAQs</a>
+                                    <a class="nav-link" href="#">My Journey</a>
                                 </li>
         
                                 <li class="nav-item">
-                                    <a class="nav-link" href="/contact-info">contact</a>
+                                    <a class="nav-link" href="#">My Experiences</a>
                                 </li>
                                 <form action="/logout" method="post">
                                     <li class="nav-item">

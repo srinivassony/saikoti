@@ -29,6 +29,8 @@ exports.createContact = async (req, res) =>
       req.flash('error', 'User login failed. Try to activate your account');
 
       res.redirect('/contact-info');
+
+      return "";
     }
 
     try
@@ -55,6 +57,8 @@ exports.createContact = async (req, res) =>
       req.flash('error', error.message);
 
       res.redirect('/contact-info');
+
+      return "";
     }
 
     req.flash('success', 'Customer support team will contact to you with in 2 bussiness days.');

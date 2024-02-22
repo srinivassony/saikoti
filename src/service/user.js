@@ -408,7 +408,7 @@ exports.userLogin = async (req, res) =>
 
         req.session.isLoggedIn = true;
         req.session.name = user.userName;
-        req.session.id = user.id;
+        req.session.userId = user.id;
         req.session.uuid =  user.uuid;
         req.session.count = countDetails && countDetails.noOfCount ? countDetails.noOfCount : 0;
         req.session.save();
@@ -607,13 +607,9 @@ exports.addCount = async (reqParams) =>
         }
         else
         {
-            // let count = 5 * Number(Number(getCount.page));
-            // console.log('count',count)
-            // let pageNo  = Number(Number(getCount.noOfCount))  == count ? Number(Number(getCount.page)) + 1 : Number(Number(getCount.page));
-            // console.log('pageNo',pageNo)
-
             let params = {
                 noOfCount: Number(Number(getCount.noOfCount)) + 1,
+                page : reqParams.page,
                 uuid: uuid,
                 updatedAt: new Date(),
                 updatedBy: uuid
@@ -631,7 +627,6 @@ exports.addCount = async (reqParams) =>
     }
     catch (error) 
     {
-        console.log(error)
         return {
             status: Status.FAIL,
             message: error.message
@@ -666,5 +661,200 @@ exports.getCount = async (reqParams) =>
             status: Status.FAIL,
             message: error.message
         }
+    }
+}
+
+exports.getUserById = async (reqParams) =>
+{
+    try
+    {
+        let userId = reqParams.id ? reqParams.id : null;
+
+        console.log('id',userId)
+
+        if (!userId)
+        {
+            req.flash('error', 'user id is required.');
+
+            res.redirect('/myAccount');
+        }
+
+        let userDetails = await db.getUserDetailsById(userId);
+console.log('userDetails',userDetails)
+        return {
+            status: Status.SUCCESS,
+            userDetails: userDetails
+        }
+    }
+    catch (error) 
+    {
+        console.log(error)
+        return {
+            status: Status.FAIL,
+            message: error.message
+        }
+    }
+}
+
+exports.updateUser = async (req, res) =>
+{
+    try
+    {
+        let userName = req.body.userName ? req.body.userName : null;
+        let email = req.body.emailInfo ? req.body.emailInfo.toLowerCase() : null;
+        let phone = req.body.phone ? req.body.phone : null;
+        let dob = req.body.dob ? req.body.dob : null;
+        let country = req.body.country ? req.body.country : null;
+        let state = req.body.state ? req.body.state : null;
+        let gender = req.body.gender ? req.body.gender : null;
+        let uuid = req.body.uuid ? req.body.uuid : null;
+        let id = req.body.userId ? req.body.userId : null;
+
+
+        if (!email)
+        {
+            req.flash('error', 'Email is required.');
+        
+            res.redirect('/myAccount');
+
+            return "";
+        }
+        else if (email && !(email.match(emailValidation)))
+        {
+            req.flash('error', 'Invalid email address');
+
+            res.redirect('/myAccount');
+
+            return "";
+        }
+        else if (email && email.toString().length > 50)
+        {
+            req.flash('error', 'Email maximum character limit is 50.');
+
+            res.redirect('/myAccount');
+
+            return "";
+        }
+
+        if (!dob)
+        {
+            req.flash('error', 'Password is required.');
+        
+            res.redirect('/myAccount');
+
+            return "";
+        }
+
+        if (!country)
+        {
+            req.flash('error', 'country is required.');
+        
+            res.redirect('/myAccount');
+
+            return "";
+        }
+        else if (country && country.toString().length > 30)
+        {
+            req.flash('error', 'country maximum character limit is 30.');
+
+            res.redirect('/myAccount');
+
+            return "";
+        }
+
+        if (!state)
+        {
+            req.flash('error', 'state is required.');
+        
+            res.redirect('/myAccount');
+
+            return "";
+        }
+        else if (state && state.toString().length > 30)
+        {
+            req.flash('error', 'state maximum character limit is 30.');
+
+            res.redirect('/myAccount');
+
+            return "";
+        }
+
+        if (!gender)
+        {
+            req.flash('error', 'gender is required.');
+        
+            res.redirect('/myAccount');
+
+            return "";
+        }
+
+        if (!phone)
+        {
+            req.flash('error', 'phone is required.');
+        
+            res.redirect('/myAccount');
+
+            return "";
+        }
+        else if (phone && !(phone.match(phoneValidation)))
+        {
+            req.flash('error', 'Invalid phone number');
+
+            res.redirect('/myAccount');
+
+            return "";
+        }
+
+        if (!userName)
+        {
+            req.flash('error', 'userName is required.');
+        
+            res.redirect('/myAccount');
+
+            return "";
+        }
+        if(userName.toString().length < 2 )
+        {
+            req.flash('error', 'userName minimum character limit is 2.');
+
+            res.redirect('/myAccount');
+
+            return "";
+        }
+        else if (userName && userName.toString().length > 30)
+        {
+            req.flash('error', 'userName maximum character limit is 30.');
+
+            res.redirect('/myAccount');
+
+            return "";
+        }
+
+        let params = {
+            userName: userName,
+            email: email,
+            phone: phone,
+            dob: dob,
+            country: country,
+            state: state,
+            gender: gender,
+            role: 'USER',
+            updatedAt: new Date(),
+            updatedBy: uuid
+        }
+
+        await db.updateUser(id, params);
+
+        req.flash('success', 'Profile updated successfully');
+        
+        res.redirect('/myAccount');
+    }
+    catch (error) 
+    {
+        req.flash('error', error.message);
+
+        res.redirect('/myAccount');
+
+        return "";
     }
 }

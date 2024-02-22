@@ -179,7 +179,7 @@ app.get('/dashboard',  (req, res) =>
 app.get('/dashboardInfo',  (req, res) =>
 {
 	var name = req.session.name;
-	var id = req.session.id;
+	var id = req.session.userId;
 	var uuid = req.session.uuid;
 	var countInfo = req.session.count;
 
@@ -208,6 +208,44 @@ app.get('/FAQs',  async(req, res) =>
 {
 	res.render('pages/faqs',{
 		isAuthenticated: req.session.isLoggedIn ? true : false
+	});
+});
+
+app.get('/myAccount',  async(req, res) =>
+{
+	var id = req.session.userId;
+	var uuid = req.session.uuid;
+
+	let message = req.flash('error');
+	if (message.length > 0)
+	{
+		message = message[0];
+	} else
+	{
+		message = null;
+	}
+
+	let message1 = req.flash('success');
+	if (message1.length > 0)
+	{
+		message1 = message1[0];
+	} 
+	else
+	{
+		message1 = null;
+	}
+
+	if (!req.session.isLoggedIn)
+	{
+		return res.redirect('/');
+	}
+
+	res.render('pages/myAccount',{
+		isAuthenticated: req.session.isLoggedIn ? true : false,
+		id: id,
+		uuid:uuid,
+		errorMessage: message,
+		sucessMessage: message1
 	});
 });
 
@@ -253,6 +291,8 @@ app.get('/api/update/invite/user/:id', userService.InviteUser);
 app.post('/api/reset/password', userService.resetPassword);
 
 app.post('/api/change/password', userService.changePassword);
+
+app.post('/api/update/user', userService.updateUser);
 
 app.post('/logout', async function (req, res)
 {
@@ -301,8 +341,14 @@ app.get('/api/delete/country', async(req, res) =>
 
 app.post('/api/fetchCount',async (req, res) =>
 {
-	console.log(req)
 	let result =  res.json(await userService.getCount(req.body));
+
+	return result;
+})
+
+app.post('/api/user/id',async (req, res) =>
+{
+	let result =  res.json(await userService.getUserById(req.body));
 
 	return result;
 })
