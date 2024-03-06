@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 let userService = require('../service/user');
 let userDb = require('../database/db/user');
 let contactService = require('../service/contact');
+let countryService = require('../service/country');
 
 //middelwares
 app.use(flash());
@@ -159,6 +160,7 @@ app.get('/dashboard',  (req, res) =>
 	var name = req.session.name;
 	var id = req.session.id;
 	var uuid = req.session.uuid;
+	var countInfo = req.session.count;
 
 	if (!req.session.isLoggedIn)
 	{
@@ -169,15 +171,17 @@ app.get('/dashboard',  (req, res) =>
 		isAuthenticated: req.session.isLoggedIn,
 		username: name,
 		id: id,
-		uuid: uuid
+		uuid: uuid,
+		countInfo: countInfo
 	});
 });
 
 app.get('/dashboardInfo',  (req, res) =>
 {
 	var name = req.session.name;
-	var id = req.session.id;
+	var id = req.session.userId;
 	var uuid = req.session.uuid;
+	var countInfo = req.session.count;
 
 	if (!req.session.isLoggedIn)
 	{
@@ -188,7 +192,8 @@ app.get('/dashboardInfo',  (req, res) =>
 		isAuthenticated: req.session.isLoggedIn,
 		username: name,
 		id: id,
-		uuid: uuid
+		uuid: uuid,
+		countInfo: countInfo
 	});
 });
 
@@ -206,10 +211,72 @@ app.get('/FAQs',  async(req, res) =>
 	});
 });
 
+app.get('/myAccount',  async(req, res) =>
+{
+	var id = req.session.userId;
+	var uuid = req.session.uuid;
+
+	let message = req.flash('error');
+	if (message.length > 0)
+	{
+		message = message[0];
+	} else
+	{
+		message = null;
+	}
+
+	let message1 = req.flash('success');
+	if (message1.length > 0)
+	{
+		message1 = message1[0];
+	} 
+	else
+	{
+		message1 = null;
+	}
+
+	if (!req.session.isLoggedIn)
+	{
+		return res.redirect('/');
+	}
+
+	res.render('pages/myAccount',{
+		isAuthenticated: req.session.isLoggedIn ? true : false,
+		id: id,
+		uuid:uuid,
+		errorMessage: message,
+		sucessMessage: message1
+	});
+});
+
 app.get('/contact-info',  async(req, res) =>
 {
+	let message = req.flash('error');
+
+	if (message.length > 0)
+	{
+		message = message[0];
+	} 
+	else
+	{
+		message = null;
+	}
+
+	let message1 = req.flash('success');
+
+	if (message1.length > 0)
+	{
+		message1 = message1[0];
+	}
+	else
+	{
+		message1 = null;
+	}
+
 	res.render('pages/contact',{
-		isAuthenticated: req.session.isLoggedIn ? true : false
+		isAuthenticated: req.session.isLoggedIn ? true : false,
+		errorMessage: message,
+		sucessMessage: message1
 	});
 });
 
@@ -224,6 +291,8 @@ app.get('/api/update/invite/user/:id', userService.InviteUser);
 app.post('/api/reset/password', userService.resetPassword);
 
 app.post('/api/change/password', userService.changePassword);
+
+app.post('/api/update/user', userService.updateUser);
 
 app.post('/logout', async function (req, res)
 {
@@ -244,8 +313,42 @@ app.post('/logout', async function (req, res)
 
 app.post('/api/add/count',async (req, res) =>
 {
-	console.log('req.body',req.body)
 	let result =  res.json(await userService.addCount(req.body));
+
+	return result;
+})
+
+app.post('/api/add/contact',contactService.createContact);
+
+app.get('/api/countries',async (req, res) =>
+{
+	let result =  res.json(await countryService.getCountries());
+
+	return result;
+});
+
+app.post('/api/states', async (req, res) =>
+{
+	let result = res.json(await countryService.getStatesByCountryId(req.body));
+
+	return result;
+});
+
+app.get('/api/delete/country', async(req, res) =>
+{
+   return res.json(await countryService.deleteCountry())
+})
+
+app.post('/api/fetchCount',async (req, res) =>
+{
+	let result =  res.json(await userService.getCount(req.body));
+
+	return result;
+})
+
+app.post('/api/user/id',async (req, res) =>
+{
+	let result =  res.json(await userService.getUserById(req.body));
 
 	return result;
 })
