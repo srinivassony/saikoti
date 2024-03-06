@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 
 let phoneValidation = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
 let emailValidation = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -41,7 +41,7 @@ const add = () =>
                                                                         
             return true
         }), 
-         body('userName').trim().not().isEmpty().withMessage('First name is required').custom( userName => {            
+         body('userName').trim().not().isEmpty().withMessage('User name is required').custom( userName => {            
                 
             if(userName.toString().length < 2 )
             {
@@ -61,6 +61,49 @@ const add = () =>
     ]
 };
 
+const addLogin = () =>
+{
+  return [
+    body('pass').trim().not().isEmpty().withMessage('Password is required'),
+    body('email').custom( email => {      
+        if(email && !(email.match(emailValidation)))
+         {
+             throw new Error('Invalid email address')   
+         }
+         else if (email && email.length > 50)
+         {
+             throw new Error('Email maximum character limit is 50')
+         }
+         else if (!email) 
+         {
+             throw new Error('Email is required')
+         }    
+                                                                 
+         return true
+     })
+
+ ]
+};
+
+const getId = () =>
+{
+  return [
+    param('id').not().isEmpty().withMessage('id is required'),
+
+  ]
+}
+
+const resetPassword = () =>
+{
+  return[
+    body('password').not().isEmpty().withMessage('Password is required'),
+  
+ ]
+}
+
 module.exports = {
-    add
+    add,
+    addLogin,
+    getId,
+    resetPassword
 }

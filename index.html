@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Textarea Character Limit</title>
+</head>
+<body>
+<textarea id="myTextarea" rows="4" cols="50"></textarea>
+<script>
+const textarea = document.getElementById('myTextarea');
+
+textarea.addEventListener('input', function() {
+    if (textarea.value.length > 300) {
+        textarea.value = textarea.value.slice(0, 300);
+    }
+});
+</script>
+</body>
+</html>

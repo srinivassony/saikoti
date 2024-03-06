@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zxx">
+<head>
+  <meta charset="utf-8">
+  <title>BIZTROX</title>
+  
+  <!-- mobile responsive meta -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <%- include('links'); %>
+  <style>
+    /* CSS for input boxes */
+    .wrap {
+    background-image: url('images/7.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat; /* Ensure the background image doesn't repeat */
+  }
+  
+   /* .input-box {
+        width: calc(10% - 20px);
+        max-width: 300px; 
+        padding: 3px;
+        margin-bottom: 10px;
+        margin-right: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        box-sizing: border-box;
+        transition: border-color 1s ease; 
+    }
+    */
+
+    .input-box {
+    width: calc(10% - 20px);
+    max-width: 300px; 
+    height: auto; /* Allow the height to adjust based on content */
+    padding: 5px; /* Add some padding for better appearance */
+    border: 1px solid #000; /* Add a solid border */
+    margin: 5px; /* Add some margin between input boxes */
+    box-sizing: border-box; /* Include padding and border in the width */
+    background-color: transparent; /* Set background color to transparent */
+    outline: none; /* Remove default outline */
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: border-color 1s ease;
+  }
+    
+    /* Style for read-only input boxes */
+    .input-box[readonly] {
+        background-color: #ffffff; /* Change to desired background color */
+    }
+    .input-box:focus {
+      border-color: dodgerblue; /* Change border color when input box is focused */
+  }
+  #countParagraph{
+    font-size: 20px;
+    color: black;
+  }
+  /* Media queries for responsiveness */
+@media screen and (max-width: 1200px) {
+  .input-box {
+      width: calc(15% - 20px); /* Adjust width for medium-sized screens */
+  }
+}
+
+@media screen and (max-width: 992px) {
+  .input-box {
+      width: calc(20% - 20px); /* Adjust width for smaller screens */
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .input-box {
+      width: calc(25% - 20px); /* Adjust width for even smaller screens */
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .input-box {
+      width: calc(50% - 20px); /* Adjust width for very small screens */
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .input-box {
+      width: calc(100% - 20px); /* Full width for mobile devices */
+  }
+}
+    </style>
+</head>
+
+<body>
+<%- include('header'); %>
+<section class="section">
+  <div class="container">
+    <div class="col-lg-12 col-md-7">
+      <div class="p-5 rounded box-shadow wrap">
+        <div class="row">
+          <div class="col-lg-12 order-2 order-lg-1">
+            <h5 class="section-title-sm" style="color: black;">Dear <%= username %>
+            </h5>
+            <h2 class="section-title section-title-border-half">Welcome to Saikoti.com</h2>
+            <p id="countParagraph" style="color: #000000;"><b>Please write "Sairam" as many times as you wish.You have written <b><span
+                  id="countDisplay" style="color: red;">0</span></b> times till now. You have to write <b><span
+                  id="targetCount" style="color: red;">10000000</span></b> to reach the target of One Crore.</b></p>
+          </div>
+          <!-- philosophy image -->
+          <!-- <div class="col-lg-5 align-self-center order-1 order-lg-2 mb-md-50">
+              <img class="img-fluid w-100" src="images/about/philosophy.jpg" alt="philosophy-image">
+          </div> -->
+
+        </div>
+        <div id="input-container"></div>
+      </div>
+    </div>
+    <div class="col-lg-12 col-md-7" style="padding-top: 50px;">
+      <p style="font-size: 40px;">Page : <b id="page-no" style="color: #ff9797;"></b></p>
+  </div>
+  </div>
+</section>
+
+<section>
+  
+</section>
+
+
+<%- include('scripts'); %>
+
+<%- include('footer'); %>
+
+<script>
+    let pageNo = 1;
+    const pageCount = document.getElementById('page-no');
+    document.addEventListener("DOMContentLoaded", function () 
+    {
+      const inputContainer = document.getElementById("input-container");
+      const countDisplay = document.getElementById('countDisplay');
+      const targetCount = document.getElementById('targetCount');
+  
+      // Function to update count
+      function updateCount()
+      {
+        const inputBoxes = document.querySelectorAll('.input-box');
+        let count = 0;
+        inputBoxes.forEach(input =>
+        {
+          console.log('here')
+          if (input.value.trim().toLowerCase() === 'sairam')
+          {
+            count++;
+          }
+        });
+
+        countDisplay.textContent = count;
+        const remainingCount = 10000000 - count;
+        targetCount.textContent = remainingCount > 0 ? remainingCount : 'You have reached the target!';
+        const updatedPageCount = pageCount.textContent;
+        let countNum = 108;
+        console.log('count', count)
+        console.log('countNum', countNum)
+        pageNo = Number(Number(count)) == countNum ? Number(updatedPageCount) + 1 : Number(updatedPageCount);
+        pageCount.textContent = pageNo;
+        console.log('pageNo', pageNo)
+      }
+
+
+      // Function to prevent paste action
+      function preventPaste(event)
+      {
+        event.preventDefault();
+      }
+
+      // Number of input boxes
+      const numInputBoxes = 108; // Adjust the number as needed
+
+      for (let i = 1; i <= numInputBoxes; i++)
+      {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = ""; // Empty initially
+        input.maxLength = 6; // Set max length to 6 characters
+        input.id = 'inputbox' + i;
+        input.classList.add('input-box');
+        input.style.textTransform = "uppercase";
+        input.addEventListener('input', updateCount);
+        input.addEventListener('paste', preventPaste);
+        // Add an event listener to each input box
+
+        console.log('pageCount-11',pageNo)
+        input.addEventListener("input", function ()
+        {
+          handleInputChange(input, pageNo);
+        });
+
+        inputContainer.appendChild(input);
+      }
+
+      // Focus on the first input box
+      inputContainer.firstChild.focus();
+    });
+
+    function handleInputChange(input, pageCount) 
+    {
+      const inputValue = input.value.toLowerCase();
+      console.log('inputValue',inputValue)
+      // If the input is valid, call the API and update the input accordingly
+      if (inputValue === "sairam" && !input.readOnly) 
+      {
+        callApi(input, pageCount)
+          .then(() =>
+          {
+            focusNextInput(input);
+          })
+          .catch(error => console.error(error));
+      }
+      else 
+      {
+        // Change background color based on validity
+        input.style.backgroundColor = "red";
+      }
+    }
+
+    function callApi(input,pageCount) 
+    {
+      // Replace the URL with your actual API endpoint
+      const apiUrl = "http://localhost:8081/api/add/count";
+
+      const data = {
+        uuid: "<%= uuid %>",
+        page : pageCount
+      };
+console.log('data',data)
+      // Return a Promise to indicate when the API call is complete
+      return fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => response.json())
+        .then(data =>
+        {
+          // If the API call is successful, make the input read-only
+          if (data && data.status === 1)
+          {
+            input.readOnly = true;
+            input.style.backgroundColor = "transparent";
+            input.style.outline = "none";
+            input.style.color = "black";
+            input.style.fontWeight = "bold";
+          }
+          else
+          {
+            focusNextInput(input)
+          }
+        })
+        .catch(error =>
+        {
+          throw error;
+        });
+    }
+
+    function focusNextInput(currentInput) 
+    {
+      const nextInput = currentInput.nextElementSibling;
+
+      // If the next input exists and its API call was successful, move focus to it
+      if (nextInput && !nextInput.readOnly) 
+      {
+        nextInput.focus();
+      }
+    }
+
+   
+      window.onload = function ()
+      {
+        const params = {
+          uuid: "<%= uuid %>"
+        };
+        pageCount.textContent =  1
+        // Fetch the count from the server using Fetch API
+        fetch('/api/fetchCount', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(params)
+        })
+          .then(response => 
+          {
+            if (!response.ok) 
+            {
+              throw new Error('Network response was not ok');
+            }
+
+            return response.json();
+          })
+          .then(data =>
+          {
+            let page = data.count.page ? data.count.page : 1;
+            pageCount.textContent = page ? page : 1;
+            console.log('page-1', page)
+            const countFromDB = data.count.noOfCount; // the response contains the count
+            document.getElementById('countDisplay').textContent = countFromDB;
+            const remainingCount = 10000000 - countFromDB;
+            document.getElementById('targetCount').textContent = remainingCount > 0 ? remainingCount : 'You have reached the target!';
+
+            for (let i = 1; i <= countFromDB; i++)
+            {
+              const input = document.getElementById('inputbox' + i);
+              if (input)
+              {
+                input.value = 'SAIRAM';
+                input.readOnly = true; // Set value to "sairam" for the corresponding input box
+                input.style.backgroundColor = "transparent";
+                input.style.outline = "none";
+                input.style.color = "black";
+                input.style.fontWeight = "bold";
+
+              }
+            }
+
+          })
+          .catch(error => console.error('Error fetching count:', error));
+      };
+  
+    
+   
+</script>
+
+</body>
+</html>

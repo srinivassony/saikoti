@@ -10,9 +10,9 @@ let createUser = async(data) =>
     return await User.query().insert(data);
 }
 
-let getUserDetails = async (id) =>
+let getUserDetails = async () =>
 {
-  return await User.query().select().where('id', id).first();
+  return await User.query().select();
 }
 
 let updateUser = async (id, data) =>
@@ -25,7 +25,17 @@ let getUserLoginDetails = async (email, password) =>
   return await User.query().select().where({
     email: email,
     password: password
-  })
+  }).first()
+}
+
+let getUserByEmailId = async(email) =>
+{
+  return await User.query().select().where('email', email).first();
+}
+
+let getUserDetailsById = async(id) =>
+{
+  return await User.query().select().where('id', id).first();
 }
 
 module.exports = {
@@ -33,6 +43,8 @@ module.exports = {
   createUser: createUser,
   getUserDetails: getUserDetails,
   updateUser: updateUser,
-  getUserLoginDetails : getUserLoginDetails
+  getUserLoginDetails : getUserLoginDetails,
+  getUserByEmailId : getUserByEmailId,
+  getUserDetailsById: getUserDetailsById
 
 }

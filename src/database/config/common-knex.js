@@ -6,8 +6,6 @@ const { database } = require("../../api/dbConnection");
 
 const rdsSqlConfig = config.rdsSql;
 
-console.log("info", "RDS DB config for common mddleware", rdsSqlConfig);
-
 const knex = database.getConnection({
     awsRegion: rdsSqlConfig.region,
     rdsSecretName: rdsSqlConfig.secretArn,
