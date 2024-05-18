@@ -158,7 +158,7 @@ app.get('/change-password',  async(req, res) =>
 app.get('/dashboard',  (req, res) =>
 {
 	var name = req.session.name;
-	var id = req.session.id;
+	var id = req.session.userId;
 	var uuid = req.session.uuid;
 	var countInfo = req.session.count;
 
