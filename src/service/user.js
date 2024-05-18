@@ -336,10 +336,11 @@ exports.reSendInviteUser = async (req, res) =>
     }
     catch (error)
     {
-        return {
-            status: Status.FAIL,
-            message: error.message
-        }
+        req.flash('error', error);
+
+        res.redirect('/active-account');
+
+        return "";
     }
 }
 
@@ -418,10 +419,11 @@ exports.userLogin = async (req, res) =>
     }
     catch (error) 
     {
-        return {
-            status: Status.FAIL,
-            message: error.message
-        }
+        req.flash('error', error);
+
+        res.redirect('/login');
+
+        return "";
     }
 }
 
@@ -680,7 +682,7 @@ exports.getUserById = async (reqParams) =>
         }
 
         let userDetails = await db.getUserDetailsById(userId);
-console.log('userDetails',userDetails)
+
         return {
             status: Status.SUCCESS,
             userDetails: userDetails
