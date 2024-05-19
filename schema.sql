@@ -6,6 +6,7 @@ create table "sk_user"(
 "email" varchar2(36) not null,
 "phone" number(10) not null,
 "password" varchar2(36) not null,
+"role" VARCHAR2(100 BYTE)not null,
 "dob" varchar2(36) not null,
 "country" varchar2(250) not null,
 "state" varchar2(250) not null,
@@ -13,7 +14,7 @@ create table "sk_user"(
 "isRegistered" number(1,0) default 0,
 "uuid" varchar2(36) not null,
 "isInvited" number(1,0) default 0,
-"inviteon" date,
+"inviteOn" date,
 "inviteLink" varchar2(100),
 "createdAt" TIMESTAMP(8),
 "createdBy" varchar2(36),
@@ -22,20 +23,18 @@ create table "sk_user"(
 primary key("id")
 );
 
-
 ---count table
 
 create table "sk_count" (
 "id" varchar2(36) not null,
 "page" number not null,
-"count" number not null,
-"userId" varchar2(36) not null,
+"noOfCount" number not null,
+"uuid" varchar2(36) not null,
 "createdAt" TIMESTAMP(8),
 "createdBy" varchar2(36),
 "updatedAt" TIMESTAMP(8),
 "updatedBy" varchar2(36),
-primary key("id"),
-foreign key ("userId") references "sk_user" ("id")
+primary key("id")
 );
 
 
