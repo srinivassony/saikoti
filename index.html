@@ -1,20 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Textarea Character Limit</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Input Boxes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            width: 100px;
+            padding: 5px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-<textarea id="myTextarea" rows="4" cols="50"></textarea>
-<script>
-const textarea = document.getElementById('myTextarea');
+    <h1 id="page-header">Page 1</h1>
+    <div id="input-container" class="input-container"></div>
+    <div>
+        <p>Count: <span id="count">0</span></p>
+    </div>
 
-textarea.addEventListener('input', function() {
-    if (textarea.value.length > 300) {
-        textarea.value = textarea.value.slice(0, 300);
-    }
-});
-</script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function () {
+            let currentPage = 1, count = 0;
+
+            async function fetchData() {
+                try {
+                    const requestParams = {
+                        uuid: '4D37501EA94149D0BBB6ACE8853E5497'
+                    };
+
+                    const response = await fetch('http://localhost:8081/api/fetchCount', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestParams)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+                    currentPage = data.count.page || 1;
+                    count = data.count.noOfCount || 0;
+console.log('count',count)
+                    for (let i = 1; i <= count; i++) {
+                        const input = document.getElementById('input' + i);
+                        if (input) {
+                            input.value = 'SAIRAM';
+                            input.readOnly = true;
+                            styleInput(input, true);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error fetching count:', error);
+                }
+            }
+
+            function styleInput(input, isReadOnly) {
+                if (isReadOnly) {
+                    input.style.backgroundColor = "transparent";
+                    input.style.outline = "none";
+                    input.style.color = "black";
+                    input.style.fontWeight = "bold";
+                } else {
+                    input.style.backgroundColor = "red";
+                }
+            }
+
+            async function saveData(count, page, input) {
+                try {
+                    const requestParams = {
+                        noOfCount: count,
+                        page: page,
+                        uuid: '4D37501EA94149D0BBB6ACE8853E5497'
+                    };
+
+                    const response = await fetch('http://localhost:8081/api/add/count', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestParams)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+                    if (data && data.status === 1) {
+                        styleInput(input, true);
+                    } else {
+                        const currentIndex = parseInt(input.id.replace('input', ''));
+                        const nextInput = document.getElementById(`input${currentIndex + 1}`);
+                        if (nextInput) {
+                            nextInput.focus();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error saving data:', error);
+                }
+            }
+
+            await fetchData();
+
+            const inputContainer = document.getElementById('input-container');
+            const numInputs = 5;
+
+            for (let i = 0; i < numInputs; i++) {
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `input${i + 1}`;
+                input.maxLength = 6;
+                input.style.textTransform = "uppercase";
+
+                input.addEventListener('input', async function () {
+                    if (this.value.toLowerCase() === 'sairam') {
+                        count++;
+                        document.getElementById('count').innerText = count;
+                        localStorage.setItem('count', count);
+                        this.readOnly = true;
+
+                        const currentIndex = parseInt(this.id.replace('input', ''));
+                        const nextInput = document.getElementById(`input${currentIndex + 1}`);
+                        if (nextInput) {
+                            nextInput.focus();
+                        } else {
+                            currentPage++;
+                            localStorage.setItem('currentPage', currentPage);
+                            document.getElementById('page-header').innerText = `Page ${currentPage}`;
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 500);
+                        }
+
+                        await saveData(count, currentPage, this);
+                    } else {
+                        styleInput(this, false);
+                    }
+                });
+
+                inputContainer.appendChild(input);
+            }
+
+            document.getElementById('page-header').innerText = `Page ${currentPage}`;
+            document.getElementById('count').innerText = count;
+        });
+    </script>
 </body>
 </html>
