@@ -609,7 +609,7 @@ exports.addCount = async (reqParams) =>
         }
         else
         {
-            let params = {
+            let params1 = {
                 noOfCount: Number(Number(getCount.noOfCount)) + 1,
                 page : reqParams.page,
                 uuid: uuid,
@@ -617,7 +617,7 @@ exports.addCount = async (reqParams) =>
                 updatedBy: uuid
             }
 
-            let updateCount = await countDB.updateCount(id, params);
+            let updateCount = await countDB.updateCount(id, params1);
 
             return {
                 status : Status.SUCCESS,

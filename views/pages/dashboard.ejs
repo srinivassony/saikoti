@@ -134,12 +134,42 @@
 <script>
     let pageNo = 1;
     const pageCount = document.getElementById('page-no');
-    document.addEventListener("DOMContentLoaded", function () 
-    {
-      const inputContainer = document.getElementById("input-container");
+    const inputContainer = document.getElementById("input-container");
       const countDisplay = document.getElementById('countDisplay');
       const targetCount = document.getElementById('targetCount');
   
+    document.addEventListener("DOMContentLoaded", function () 
+    {
+
+      // Number of input boxes
+      const numInputBoxes = 10; // Adjust the number as needed
+
+      for (let i = 1; i <= numInputBoxes; i++)
+      {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = ""; // Empty initially
+        input.maxLength = 6; // Set max length to 6 characters
+        input.id = 'inputbox' + i;
+        input.classList.add('input-box');
+        input.style.textTransform = "uppercase";
+        // input.addEventListener('input', updateCount);
+        input.addEventListener('paste', preventPaste);
+        // Add an event listener to each input box
+        
+        input.addEventListener("input", function ()
+        {
+          handleInputChange(input, pageNo);
+        });
+
+        inputContainer.appendChild(input);
+      }
+
+      // Focus on the first input box
+      inputContainer.firstChild.focus();
+    });
+
+    
       // Function to update count
       function updateCount()
       {
@@ -158,7 +188,7 @@
         const remainingCount = 10000000 - count;
         targetCount.textContent = remainingCount > 0 ? remainingCount : 'You have reached the target!';
         const updatedPageCount = pageCount.textContent;
-        let countNum = 108;
+let countNum = 108;
         console.log('count', count)
         console.log('countNum', countNum)
         pageNo = Number(Number(count)) == countNum ? Number(updatedPageCount) + 1 : Number(updatedPageCount);
@@ -166,41 +196,11 @@
         console.log('pageNo', pageNo)
       }
 
-
-      // Function to prevent paste action
-      function preventPaste(event)
+        // Function to prevent paste action
+        function preventPaste(event)
       {
         event.preventDefault();
       }
-
-      // Number of input boxes
-      const numInputBoxes = 108; // Adjust the number as needed
-
-      for (let i = 1; i <= numInputBoxes; i++)
-      {
-        const input = document.createElement("input");
-        input.type = "text";
-        input.value = ""; // Empty initially
-        input.maxLength = 6; // Set max length to 6 characters
-        input.id = 'inputbox' + i;
-        input.classList.add('input-box');
-        input.style.textTransform = "uppercase";
-        input.addEventListener('input', updateCount);
-        input.addEventListener('paste', preventPaste);
-        // Add an event listener to each input box
-
-        console.log('pageCount-11',pageNo)
-        input.addEventListener("input", function ()
-        {
-          handleInputChange(input, pageNo);
-        });
-
-        inputContainer.appendChild(input);
-      }
-
-      // Focus on the first input box
-      inputContainer.firstChild.focus();
-    });
 
     function handleInputChange(input, pageCount) 
     {
@@ -252,6 +252,55 @@ console.log('data',data)
             input.style.outline = "none";
             input.style.color = "black";
             input.style.fontWeight = "bold";
+            
+            countDisplay.textContent = data.data.count.noOfCount;
+            const remainingCount = 10000000 - data.data.count.noOfCount;
+            targetCount.textContent = remainingCount > 0 ? remainingCount : 'You have reached the target!';
+            console.log('data',data)
+
+            console.log('data-1', data.data.count.noOfCount % 10)
+           
+
+            if(data && data.data.count.noOfCount % 10 == 0)
+            {
+              console.log('here')
+              let pageCount = Number(data.data.count.page) + 1;
+              pageCount.textContent =  pageCount ?  pageCount : 1;
+
+              console.log(pageCount,'pageCount')
+
+              const numInputBoxes = 10; // Adjust the number as needed
+              
+              const container = document.getElementById('input-container');
+              const inputs = container.querySelectorAll('input[type="text"]');
+              inputs.forEach(input => {
+              container.removeChild(input);
+              });
+
+              for (let i = 1; i <= numInputBoxes; i++)
+              {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.value = ""; // Empty initially
+                input.maxLength = 6; // Set max length to 6 characters
+                input.id = 'inputbox' + i;
+                input.classList.add('input-box');
+                input.style.textTransform = "uppercase";
+                // Add an event listener to each input box
+
+                // input.addEventListener('input', updateCount);
+        input.addEventListener('paste', preventPaste);
+        // Add an event listener to each input box
+        
+        input.addEventListener("input", function ()
+        {
+          handleInputChange(input, pageCount);
+        });
+
+                document.getElementById("input-container").appendChild(input);
+                
+              }
+                        }
           }
           else
           {
@@ -309,7 +358,52 @@ console.log('data',data)
             const remainingCount = 10000000 - countFromDB;
             document.getElementById('targetCount').textContent = remainingCount > 0 ? remainingCount : 'You have reached the target!';
 
-            for (let i = 1; i <= countFromDB; i++)
+            if(data && countFromDB % 10 == 0)
+            {
+              console.log('here-1')
+
+              let pageCount = Number(page) + 1;
+              pageCount.textContent =  pageCount ?  pageCount : 1;
+
+              const numInputBoxes = 10; // Adjust the number as needed
+              
+              const container = document.getElementById('input-container');
+              const inputs = container.querySelectorAll('input[type="text"]');
+              inputs.forEach(input => {
+                console.log('input',input)
+              container.removeChild(input);
+              });
+
+              for (let i = 1; i <= numInputBoxes; i++)
+              {
+                const input = document.createElement("input");
+                input.type = "text";
+                input.value = ""; // Empty initially
+                input.maxLength = 6; // Set max length to 6 characters
+                input.id = 'inputbox' + i;
+                input.classList.add('input-box');
+                input.style.textTransform = "uppercase";
+                // Add an event listener to each input box
+                //input.addEventListener('input', updateCount);
+                  input.addEventListener('paste', preventPaste);
+                  // Add an event listener to each input box
+                  
+                  input.addEventListener("input", function ()
+                  {
+                    handleInputChange(input, pageCount);
+                  });
+
+                document.getElementById("input-container").appendChild(input);
+                
+              }
+            }
+            else
+            {
+              let cc = countFromDB % page;
+
+              console.log('cc',cc)
+
+               for (let i = 1; i <= cc; i++)
             {
               const input = document.getElementById('inputbox' + i);
               if (input)
@@ -323,6 +417,9 @@ console.log('data',data)
 
               }
             }
+            }
+
+           
 
           })
           .catch(error => console.error('Error fetching count:', error));
